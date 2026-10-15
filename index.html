@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Mi Negocio</title>
+    <meta name="description" content="Anota lo que vendes y gastas, calcula tus precios y mira cuánto te queda. Funciona sin internet.">
+    <meta name="theme-color" content="#FBF6EC">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Mi Negocio">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icons/icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="./css/styles.css">
+    <!-- Precarga de módulos: en datos móviles lentos evita ir pidiendo archivo por archivo -->
+    <link rel="modulepreload" href="./js/config.js">
+    <link rel="modulepreload" href="./js/format.js">
+    <link rel="modulepreload" href="./js/db.js">
+    <link rel="modulepreload" href="./js/ui.js">
+    <link rel="modulepreload" href="./js/backup.js">
+    <link rel="modulepreload" href="./js/screens/inicio.js">
+    <link rel="modulepreload" href="./js/screens/caja.js">
+    <link rel="modulepreload" href="./js/screens/precio.js">
+    <link rel="modulepreload" href="./js/screens/ajustes.js">
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body>
+    <button id="actualizacion" class="actualizacion" type="button" hidden>Hay una versión nueva, toca para actualizar</button>
+    <main id="app" class="app">
+      <p class="cargando">Cargando…</p>
+    </main>
+    <div id="avisos" class="avisos" aria-live="polite" aria-atomic="true"></div>
+    <noscript>
+      <p class="sin-js">Esta app necesita JavaScript. Ábrela en Chrome.</p>
+    </noscript>
+    <script nomodule>
+      document.getElementById('app').innerHTML =
+        '<p class="sin-js">Tu navegador es muy antiguo para esta app. Actualiza Chrome desde Play Store y vuelve a abrirla.</p>';
+    </script>
+  </body>
+</html>
