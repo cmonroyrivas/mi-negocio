@@ -1,8 +1,8 @@
 // Inicio: saldo de hoy y accesos grandes. La primera vez, la bienvenida.
 import { leerConfig, guardarConfig, listarPorFecha } from '../db.js';
-import { pesos, hoyISO } from '../format.js';
+import { pesos, hoyISO, normalizarWhatsapp } from '../format.js';
 import { h, anexar, rellenar, icono, ir, aviso, puedeInstalar, instalar } from '../ui.js';
-import { debeRecordarRespaldo, compartirRespaldo } from '../backup.js';
+import { debeRecordarRespaldo, compartirRespaldo, elegirYRecuperar } from '../backup.js';
 
 const suma = (lista) => lista.reduce((total, r) => total + r.monto, 0);
 
@@ -116,23 +116,6 @@ function tarjeta(href, clase, nombreIcono, titulo, texto) {
 
 // ---- Primera vez ----
 
-// Acepta "9 1234 5678", "+56 9 1234 5678" o "912345678" y devuelve "56912345678".
-// Vacío devuelve ''. Si no se entiende, devuelve null.
-export function normalizarWhatsapp(texto) {
-  let d = String(texto || '').replace(/\D/g, '');
-  if (!d) return '';
-  if (d.length === 11 && d.startsWith('569')) d = d.slice(2);
-  if (d.length === 8) d = '9' + d;
-  return d.length === 9 && d.startsWith('9') ? '56' + d : null;
-}
-
-// "56912345678" -> "9 1234 5678" (para mostrar en el campo)
-export function whatsappParaMostrar(guardado) {
-  if (!guardado) return '';
-  const d = guardado.slice(2);
-  return `${d.slice(0, 1)} ${d.slice(1, 5)} ${d.slice(5)}`;
-}
-
 function renderBienvenida(vista) {
   const entradaNombre = h('input', {
     class: 'entrada',
@@ -227,6 +210,23 @@ function renderBienvenida(vista) {
           h('button', { type: 'submit', class: 'boton boton-principal boton-bloque boton-guardar' }, 'Empezar', icono('derecha')),
         ),
         h('p', { class: 'pista' }, 'Tus datos quedan solo en este celular. No te pedimos correo ni contraseña.'),
+      ),
+      h(
+        'div',
+        { class: 'recuperar-bienvenida' },
+        h('p', {}, '¿Cambiaste de celular?'),
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'boton-texto',
+            onclick: async () => {
+              if (await elegirYRecuperar()) ir('/', { reemplazar: true });
+            },
+          },
+          icono('subir'),
+          'Recupera tu respaldo',
+        ),
       ),
     ),
   );

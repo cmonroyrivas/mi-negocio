@@ -95,3 +95,22 @@ export function hora(isoConHora) {
 export function fechaLocalDe(isoConHora) {
   return isoDesdeFecha(new Date(isoConHora));
 }
+
+// ---- WhatsApp ----
+
+// Acepta "9 1234 5678", "+56 9 1234 5678" o "912345678" y devuelve "56912345678".
+// Vacío devuelve ''. Si no se entiende, devuelve null.
+export function normalizarWhatsapp(texto) {
+  let d = String(texto || '').replace(/\D/g, '');
+  if (!d) return '';
+  if (d.length === 11 && d.startsWith('569')) d = d.slice(2);
+  if (d.length === 8) d = '9' + d;
+  return d.length === 9 && d.startsWith('9') ? '56' + d : null;
+}
+
+// "56912345678" -> "9 1234 5678" (para mostrar en el campo)
+export function whatsappParaMostrar(guardado) {
+  if (!guardado) return '';
+  const d = guardado.slice(2);
+  return `${d.slice(0, 1)} ${d.slice(1, 5)} ${d.slice(5)}`;
+}

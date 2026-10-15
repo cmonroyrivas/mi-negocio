@@ -486,6 +486,21 @@ h2:focus {
   margin-top: 28px;
 }
 
+.recuperar-bienvenida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 2px dashed var(--linea);
+  color: var(--tinta-suave);
+}
+
+.recuperar-bienvenida .boton-texto {
+  color: var(--tinta);
+}
+
 /* ---------- Formularios ---------- */
 
 .campo {
