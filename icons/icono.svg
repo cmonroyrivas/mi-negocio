@@ -1,0 +1,14 @@
+<!-- Dibujo original del ícono de Mi Negocio (los PNG se generan a partir de estas medidas) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 112">
+  <rect x="2" y="2" width="108" height="108" rx="24" fill="#1d6a40"/>
+  <rect x="24" y="56" width="64" height="34" fill="#fbf6ec"/>
+  <rect x="30" y="62" width="12" height="10" rx="2" fill="#f3c24c"/>
+  <rect x="70" y="62" width="12" height="10" rx="2" fill="#f3c24c"/>
+  <rect x="49" y="65" width="14" height="25" rx="3" fill="#1d6a40"/>
+  <rect x="49" y="80" width="14" height="10" fill="#1d6a40"/>
+  <rect x="18" y="26" width="76" height="6" rx="3" fill="#231c14"/>
+  <path d="M20 32h14.4v14H20zM48.8 32h14.4v14H48.8zM77.6 32H92v14H77.6z" fill="#fbf6ec"/>
+  <path d="M34.4 32h14.4v14H34.4zM63.2 32h14.4v14H63.2z" fill="#f3c24c"/>
+  <path d="M20 46a7.2 7.2 0 0 0 14.4 0zM48.8 46a7.2 7.2 0 0 0 14.4 0zM77.6 46A7.2 7.2 0 0 0 92 46z" fill="#fbf6ec"/>
+  <path d="M34.4 46a7.2 7.2 0 0 0 14.4 0zM63.2 46a7.2 7.2 0 0 0 14.4 0z" fill="#f3c24c"/>
+</svg>

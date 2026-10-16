@@ -232,15 +232,16 @@ function renderBienvenida(vista) {
   );
 }
 
-// Dibujo simple de un local con toldo (el mismo del ícono de la app).
+// Dibujo simple de un local con toldo (el mismo de icons/icono.svg).
 function dibujoTienda() {
   const contenedor = h('div', { class: 'bienvenida-dibujo', 'aria-hidden': 'true' });
   contenedor.innerHTML = `<svg viewBox="0 0 112 112">
-    <rect x="2" y="2" width="108" height="108" rx="26" fill="#1d6a40"/>
-    <rect x="24" y="52" width="64" height="38" fill="#fbf6ec"/>
-    <rect x="48" y="62" width="16" height="28" rx="3" fill="#1d6a40"/>
-    <rect x="30" y="60" width="12" height="12" rx="2" fill="#f3c24c"/>
-    <rect x="70" y="60" width="12" height="12" rx="2" fill="#f3c24c"/>
+    <rect x="2" y="2" width="108" height="108" rx="24" fill="#1d6a40"/>
+    <rect x="24" y="56" width="64" height="34" fill="#fbf6ec"/>
+    <rect x="30" y="62" width="12" height="10" rx="2" fill="#f3c24c"/>
+    <rect x="70" y="62" width="12" height="10" rx="2" fill="#f3c24c"/>
+    <rect x="49" y="65" width="14" height="25" rx="3" fill="#1d6a40"/>
+    <rect x="49" y="80" width="14" height="10" fill="#1d6a40"/>
     <rect x="18" y="26" width="76" height="6" rx="3" fill="#231c14"/>
     <path d="M20 32h14.4v14H20zM48.8 32h14.4v14H48.8zM77.6 32H92v14H77.6z" fill="#fbf6ec"/>
     <path d="M34.4 32h14.4v14H34.4zM63.2 32h14.4v14H63.2z" fill="#f3c24c"/>
