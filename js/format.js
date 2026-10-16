@@ -9,6 +9,7 @@ const fmtNumero = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 });
 const fmtDiaLargo = new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
 const fmtFecha = new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
 const fmtHora = new Intl.DateTimeFormat('es-CL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const fmtMes = new Intl.DateTimeFormat('es-CL', { month: 'long' });
 
 // 12000 -> "$12.000". El signo va antes del peso ("-$2.000"), como se escribe acá.
 export function pesos(n) {
@@ -78,6 +79,16 @@ export function nombreDia(iso) {
 // "jueves, 15 de octubre"
 export function diaLargo(iso) {
   return fmtDiaLargo.format(fechaDesdeISO(iso));
+}
+
+// "octubre"
+export function nombreMes(iso) {
+  return fmtMes.format(fechaDesdeISO(iso));
+}
+
+// '2026-10-15' -> '2026-10-01'
+export function inicioDeMes(iso) {
+  return iso.slice(0, 8) + '01';
 }
 
 // "15 de octubre de 2026"

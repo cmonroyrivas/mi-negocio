@@ -365,6 +365,32 @@ h2:focus {
   color: #e9dfcd;
 }
 
+.saldo-mes {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(251, 246, 236, 0.3);
+}
+
+.saldo-mes-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.saldo-mes-monto {
+  font-size: 1.625rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.saldo-mes-monto.negativo {
+  color: #ffb894;
+}
+
 .tarjetas {
   display: grid;
   gap: 16px;
@@ -1233,7 +1259,8 @@ h2:focus {
   box-shadow: 0 1px 0 var(--tinta);
 }
 
-.opcion-ganancia[aria-pressed='true'] {
+.opcion-ganancia[aria-pressed='true'],
+.opcion-ganancia.elegida {
   background: var(--mostaza-claro);
 }
 
@@ -1243,9 +1270,16 @@ h2:focus {
   line-height: 1.1;
 }
 
-.opcion-porcentaje {
+.opcion-pct {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tinta-suave);
+}
+
+.opcion-detalle {
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.3;
   color: var(--tinta-suave);
 }
 
@@ -1263,12 +1297,41 @@ h2:focus {
   color: var(--tinta);
 }
 
-.otro-porcentaje {
+.opcion-precio .icono {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+}
+
+/* "Pongo yo el precio" */
+.precio-propio {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: end;
-  margin-top: 4px;
+  gap: 14px;
+  padding: 18px;
+  border: 2px dashed var(--tinta-suave);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.vista-previa {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--tinta-suave);
+}
+
+.vista-previa.gana {
+  color: var(--verde);
+}
+
+.vista-previa.pierde {
+  color: var(--peligro);
+}
+
+.nota-peligro {
+  border-color: var(--peligro);
+  background: var(--peligro-claro);
+  color: var(--peligro);
+  font-weight: 700;
 }
 
 .resultado {
@@ -1336,6 +1399,10 @@ h2:focus {
   color: var(--tinta-suave);
 }
 
+.resultado-partes .pierde strong {
+  color: var(--peligro);
+}
+
 .explicacion {
   margin: 12px 0 0;
   padding: 0 0 0 1.4em;
@@ -1354,6 +1421,11 @@ h2:focus {
   background: var(--verde-claro);
   color: var(--verde-hondo);
   font-weight: 700;
+}
+
+.ganancia-total.pierde {
+  background: var(--peligro-claro);
+  color: var(--peligro);
 }
 
 /* ---------- Ajustes ---------- */

@@ -6,27 +6,41 @@ import { h, anexar, icono, ir, volver, aviso, confirmar, encabezado } from '../u
 
 // ---- El cálculo (sin pantalla, para poder probarlo solo) ----
 // costo de cada una = gastos / unidades; precio = costo + ganancia, redondeado hacia arriba a $10.
-export function calcularPrecio({ materiales, unidades, porcentaje }) {
+// Si la persona pone su propio precio (precioManual), se usa tal cual y se calcula cuánto gana
+// (o cuánto pierde: la ganancia puede ser negativa).
+export function calcularPrecio({ materiales, unidades, porcentaje, precioManual }) {
   const total = materiales.reduce((suma, m) => suma + (m.monto || 0), 0);
   if (!(total > 0)) return { error: 'Anota al menos una cosa con lo que gastas.' };
   if (!(unidades > 0)) return { error: 'Pon cuántas te salen. Tiene que ser 1 o más.' };
   const costoExacto = total / unidades;
-  const precioExacto = costoExacto * (1 + porcentaje / 100);
-  const precio = redondearA10(precioExacto);
+  const manual = precioManual > 0;
+  const precioExacto = manual ? precioManual : costoExacto * (1 + porcentaje / 100);
+  const precio = manual ? Math.round(precioManual) : redondearA10(precioExacto);
   const costoUnitario = Math.round(costoExacto);
   return {
     total,
     costoUnitario,
     precioExacto,
     precio,
+    manual,
     ganancia: precio - costoUnitario,
     gananciaTotal: precio * unidades - total,
+    // Lo mínimo a cobrar para no perder (redondeado hacia arriba a $10)
+    precioMinimo: redondearA10(costoExacto),
   };
 }
 
 // ---- Estado del asistente (vive mientras la app está abierta) ----
 function nuevoCalculo() {
-  return { nombre: '', materiales: [{ nombre: '', monto: 0 }], unidades: 1, porcentaje: null, guardado: false, profInicio: 0 };
+  return {
+    nombre: '',
+    materiales: [{ nombre: '', monto: 0 }],
+    unidades: 1,
+    porcentaje: null, // Poco / Normal / Harto
+    precioManual: null, // o el precio que puso la persona
+    guardado: false,
+    profInicio: 0,
+  };
 }
 let calculo = nuevoCalculo();
 
@@ -36,7 +50,7 @@ function primerPasoIncompleto() {
   if (!calculo.nombre) return 1;
   if (totalMateriales() <= 0) return 2;
   if (!(calculo.unidades > 0)) return 3;
-  if (calculo.porcentaje == null) return 4;
+  if (calculo.porcentaje == null && !(calculo.precioManual > 0)) return 4;
   return 5;
 }
 
@@ -331,84 +345,123 @@ function paso3(vista) {
   );
 }
 
-// 4. ¿Cuánto quieres ganar?
+// 4. ¿Cuánto quieres ganar? (o "Pongo yo el precio")
 function paso4(vista) {
   const base = { materiales: calculo.materiales, unidades: calculo.unidades };
   const { costoUnitario } = calcularPrecio({ ...base, porcentaje: 0 });
   const elegir = (porcentaje) => {
     if (porcentaje !== calculo.porcentaje) calculo.guardado = false;
     calculo.porcentaje = porcentaje;
+    calculo.precioManual = null;
     siguiente(4);
   };
-  const esOtro = calculo.porcentaje != null && !GANANCIAS.some((g) => g.porcentaje === calculo.porcentaje);
+  const elegirPrecio = (precio) => {
+    if (precio !== calculo.precioManual) calculo.guardado = false;
+    calculo.precioManual = precio;
+    calculo.porcentaje = null;
+    siguiente(4);
+  };
+  const conPrecioPropio = calculo.precioManual > 0;
 
-  const entradaOtro = h('input', {
+  // -- Pongo yo el precio: mientras escribe, le decimos si gana o pierde --
+  const entradaPrecio = h('input', {
     class: 'entrada numero',
-    id: 'precio-otro',
+    id: 'precio-propio',
     type: 'text',
     inputmode: 'numeric',
     autocomplete: 'off',
     enterkeyhint: 'done',
-    placeholder: 'Ej: 40',
-    value: esOtro ? String(calculo.porcentaje) : '',
+    placeholder: '0',
+    value: conPrecioPropio ? numero(calculo.precioManual) : '',
   });
+  const vistaPrevia = h('p', { class: 'vista-previa', 'aria-live': 'polite' });
   const error = mensajeError();
-  const formOtro = h(
+
+  function pintarVistaPrevia() {
+    const precio = leerMonto(entradaPrecio.value);
+    vistaPrevia.className = 'vista-previa';
+    if (!precio) {
+      vistaPrevia.textContent = `Cada una te cuesta ${pesos(costoUnitario)}.`;
+      return;
+    }
+    const { ganancia } = calcularPrecio({ ...base, precioManual: precio });
+    if (ganancia > 0) {
+      vistaPrevia.classList.add('gana');
+      vistaPrevia.textContent = `Ganas ${pesos(ganancia)} por cada una.`;
+    } else if (ganancia === 0) {
+      vistaPrevia.classList.add('pierde');
+      vistaPrevia.textContent = 'No ganas nada: solo recuperas lo que gastas.';
+    } else {
+      vistaPrevia.classList.add('pierde');
+      vistaPrevia.textContent = `Pierdes ${pesos(-ganancia)} por cada una.`;
+    }
+  }
+  entradaPrecio.addEventListener('input', () => {
+    const precio = Math.min(leerMonto(entradaPrecio.value), 999999999);
+    entradaPrecio.value = precio ? numero(precio) : '';
+    entradaPrecio.removeAttribute('aria-invalid');
+    error.replaceChildren();
+    pintarVistaPrevia();
+  });
+  pintarVistaPrevia();
+
+  const formPrecio = h(
     'form',
     {
-      class: 'otro-porcentaje',
+      class: 'precio-propio',
       novalidate: true,
-      hidden: !esOtro,
+      hidden: !conPrecioPropio,
       onsubmit: (e) => {
         e.preventDefault();
-        const texto = entradaOtro.value.trim();
-        const p = leerMonto(texto);
-        if (!texto || p > 1000) return mostrarError(error, 'Pon un número entre 0 y 1000.', entradaOtro);
-        elegir(p);
+        const precio = leerMonto(entradaPrecio.value);
+        if (!precio) return mostrarError(error, 'Escribe cuánto quieres cobrar por cada una.', entradaPrecio);
+        elegirPrecio(precio);
       },
     },
     h(
       'div',
       { class: 'campo' },
-      h('label', { class: 'campo-etiqueta', for: 'precio-otro' }, '¿Cuánto % quieres ganar?'),
-      h('div', { class: 'con-prefijo' }, h('span', { class: 'prefijo', 'aria-hidden': 'true' }, '%'), entradaOtro),
+      h('label', { class: 'campo-etiqueta', for: 'precio-propio' }, '¿Cuánto quieres cobrar por cada una?'),
+      h('div', { class: 'con-prefijo' }, h('span', { class: 'prefijo', 'aria-hidden': 'true' }, '$'), entradaPrecio),
     ),
-    h('button', { type: 'submit', class: 'boton boton-principal' }, 'Ver precio'),
+    vistaPrevia,
+    error,
+    h('button', { type: 'submit', class: 'boton boton-principal boton-bloque' }, 'Ver resultado', icono('derecha')),
   );
 
   vista.append(
     h('h2', { class: 'pregunta' }, '¿Cuánto quieres ganar?'),
-    h('p', { class: 'pregunta-ayuda' }, `Cada una te cuesta ${pesos(costoUnitario)}. Elige una opción:`),
+    h('p', { class: 'pregunta-ayuda' }, `Cada una te cuesta ${pesos(costoUnitario)}. Elige una opción o pon tu propio precio:`),
     h(
       'div',
       { class: 'paso-cuerpo opciones-ganancia' },
-      GANANCIAS.map((g) =>
-        h(
+      GANANCIAS.map((g) => {
+        const r = calcularPrecio({ ...base, porcentaje: g.porcentaje });
+        return h(
           'button',
           { type: 'button', class: 'opcion-ganancia', 'aria-pressed': String(calculo.porcentaje === g.porcentaje), onclick: () => elegir(g.porcentaje) },
-          h('span', { class: 'opcion-nombre' }, g.etiqueta),
-          h('span', { class: 'opcion-precio' }, 'Cobras', h('strong', { class: 'numero' }, pesos(calcularPrecio({ ...base, porcentaje: g.porcentaje }).precio))),
-          h('span', { class: 'opcion-porcentaje' }, `Ganas un ${g.porcentaje}%`),
-        ),
-      ),
+          h('span', { class: 'opcion-nombre' }, g.etiqueta, h('span', { class: 'opcion-pct' }, ` +${g.porcentaje}%`)),
+          h('span', { class: 'opcion-precio' }, 'Cobras', h('strong', { class: 'numero' }, pesos(r.precio))),
+          h('span', { class: 'opcion-detalle' }, `Ganas ${pesos(r.ganancia)} por cada una`),
+        );
+      }),
       h(
         'button',
         {
           type: 'button',
-          class: 'opcion-ganancia',
-          'aria-expanded': String(!formOtro.hidden),
+          class: 'opcion-ganancia' + (conPrecioPropio ? ' elegida' : ''),
+          'aria-expanded': String(conPrecioPropio),
           onclick: (e) => {
-            formOtro.hidden = !formOtro.hidden;
-            e.currentTarget.setAttribute('aria-expanded', String(!formOtro.hidden));
-            if (!formOtro.hidden) entradaOtro.focus();
+            formPrecio.hidden = !formPrecio.hidden;
+            e.currentTarget.setAttribute('aria-expanded', String(!formPrecio.hidden));
+            if (!formPrecio.hidden) entradaPrecio.focus();
           },
         },
-        h('span', { class: 'opcion-nombre' }, 'Otro'),
-        h('span', { class: 'opcion-precio' }, 'Tú eliges'),
-        h('span', { class: 'opcion-porcentaje' }, 'Pones el % que quieras'),
+        h('span', { class: 'opcion-nombre' }, 'Pongo yo el precio'),
+        h('span', { class: 'opcion-precio' }, icono('lapiz')),
+        h('span', { class: 'opcion-detalle' }, 'Escribes cuánto cobrar y te digo cuánto ganas'),
       ),
-      formOtro,
-      error,
+      formPrecio,
     ),
   );
 }
@@ -420,6 +473,33 @@ function paso5(vista) {
   const frase = ganancia ? ganancia.frase : `Le sumamos un ${calculo.porcentaje}% para que ganes`;
   const varias = calculo.unidades > 1;
   const sumoTiempo = calculo.materiales.some((m) => /tiempo/i.test(m.nombre));
+  const pierde = r.ganancia < 0;
+
+  // Con precio propio, explicamos lo que gana (o pierde) con ese precio.
+  let explicacionPrecio;
+  if (!r.manual) {
+    explicacionPrecio = [
+      h('li', {}, `${frase}: ${pesos(r.precioExacto)}.`),
+      r.precio !== Math.round(r.precioExacto) && h('li', {}, `Lo redondeamos a ${pesos(r.precio)} para que sea fácil cobrar.`),
+    ];
+  } else if (pierde) {
+    explicacionPrecio = h('li', {}, `Tú decidiste cobrar ${pesos(r.precio)}: pierdes ${pesos(-r.ganancia)} por cada una.`);
+  } else if (r.ganancia === 0) {
+    explicacionPrecio = h('li', {}, `Tú decidiste cobrar ${pesos(r.precio)}: es lo mismo que te cuesta, así que no ganas nada.`);
+  } else {
+    explicacionPrecio = h('li', {}, `Tú decidiste cobrar ${pesos(r.precio)}, así que ganas ${pesos(r.ganancia)} por cada una.`);
+  }
+
+  const avisoPerdida =
+    r.ganancia <= 0 &&
+    h(
+      'p',
+      { class: 'nota nota-peligro', role: 'note' },
+      icono('alerta'),
+      pierde
+        ? `Con este precio pierdes plata. Para no perder, cobra al menos ${pesos(r.precioMinimo)} por cada una.`
+        : `Con este precio no ganas nada. Para ganar, cobra más de ${pesos(r.costoUnitario)}.`,
+    );
 
   const notaGuardado = h('p', { class: 'pista', hidden: !calculo.guardado }, 'Lo vas a ver como sugerencia cuando toques Vendí en Mi caja.');
   const botonGuardar = h(
@@ -506,19 +586,32 @@ function paso5(vista) {
         'div',
         { class: 'resultado-partes' },
         h('div', {}, h('span', {}, 'Te cuesta'), h('strong', { class: 'numero' }, pesos(r.costoUnitario)), h('span', {}, 'cada una')),
-        h('div', {}, h('span', {}, 'Ganas'), h('strong', { class: 'numero' }, pesos(r.ganancia)), h('span', {}, 'cada una')),
+        h(
+          'div',
+          { class: pierde ? 'pierde' : '' },
+          h('span', {}, pierde ? 'Pierdes' : 'Ganas'),
+          h('strong', { class: 'numero' }, pesos(Math.abs(r.ganancia))),
+          h('span', {}, 'cada una'),
+        ),
       ),
     ),
+    avisoPerdida,
     h('h2', { class: 'seccion-titulo' }, 'Así lo calculamos'),
     h(
       'ol',
       { class: 'explicacion' },
       h('li', {}, varias ? `Gastas ${pesos(r.total)} y te salen ${numero(calculo.unidades)}.` : `Gastas ${pesos(r.total)} para hacer una.`),
       varias && h('li', {}, `Entonces cada una te cuesta ${pesos(r.costoUnitario)}.`),
-      h('li', {}, `${frase}: ${pesos(r.precioExacto)}.`),
-      r.precio !== Math.round(r.precioExacto) && h('li', {}, `Lo redondeamos a ${pesos(r.precio)} para que sea fácil cobrar.`),
+      explicacionPrecio,
     ),
-    varias && h('p', { class: 'ganancia-total' }, `Si vendes las ${numero(calculo.unidades)}, ganas ${pesos(r.gananciaTotal)}.`),
+    varias &&
+      h(
+        'p',
+        { class: 'ganancia-total' + (r.gananciaTotal < 0 ? ' pierde' : '') },
+        r.gananciaTotal < 0
+          ? `Si vendes las ${numero(calculo.unidades)}, pierdes ${pesos(-r.gananciaTotal)}.`
+          : `Si vendes las ${numero(calculo.unidades)}, ganas ${pesos(r.gananciaTotal)}.`,
+      ),
     !sumoTiempo && h('p', { class: 'nota nota-suave' }, icono('reloj'), TEXTOS.tiempoVale),
     h(
       'div',

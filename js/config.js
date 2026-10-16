@@ -1,6 +1,6 @@
 // Constantes de la app.
 // Si cambias APP_VERSION, cambia también CACHE_VERSION en sw.js (deben ir juntas).
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.1.0';
 
 // Cuánto dura el botón "Deshacer" después de anotar, cambiar o borrar.
 export const DESHACER_MS = 5000;

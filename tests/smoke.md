@@ -21,6 +21,8 @@ qué se hizo y qué pasó.
 - [ ] Hay dos tarjetas grandes: **Mi caja** y **¿Cuánto cobro?**, y un enlace chico **Ajustes**.
 - [ ] Con ventas y gastos de hoy, muestra "Vendiste $X · Gastaste $Y" y el saldo correcto.
 - [ ] Si se gastó más de lo vendido, el monto sale negativo (`-$5.000`).
+- [ ] Debajo aparece "En [mes] te quedó $X" con lo vendido y gastado desde el día 1 del mes hasta hoy
+      (incluye días anteriores; no aparece si en el mes no hay nada anotado).
 
 ## 2. Mi caja
 
@@ -65,7 +67,12 @@ qué se hizo y qué pasó.
 - [ ] Paso 2: una cosa con nombre pero sin monto → "Falta cuánto gastas en “…”".
 - [ ] Paso 2: **Sumar mi tiempo** agrega "Mi tiempo" y deja el cursor en el monto.
 - [ ] Paso 3: botones − y + cambian el número; con 0 o vacío → "Pon cuántas te salen. Tiene que ser 1 o más."
-- [ ] Paso 4: cada opción muestra cuánto cobrarías. **Otro** pide un %.
+- [ ] Paso 4: Poco / Normal / Harto muestran cuánto cobras y cuánto ganas en pesos por cada una.
+- [ ] Paso 4: **Pongo yo el precio** abre un campo. Al escribir dice "Ganas $X por cada una" (verde)
+      o "Pierdes $X por cada una" (rojo). Vacío y **Ver resultado** → "Escribe cuánto quieres cobrar…".
+- [ ] Precio propio $1.500 (con harina $8.500 + gas $3.000, 10 unidades) → Cobra $1.500, ganas $350; "Si vendes las 10, ganas $3.500".
+- [ ] Precio propio $1.000 en el mismo caso → "Pierdes $150", aviso rojo "Para no perder, cobra al menos $1.150", "Si vendes las 10, pierdes $1.500".
+- [ ] Volver atrás desde el resultado deja el precio propio escrito; elegir **Normal** después vuelve a $1.730.
 - [ ] El botón atrás del celular vuelve al paso anterior sin perder lo escrito.
 
 **Casos de prueba (deben dar exacto):**

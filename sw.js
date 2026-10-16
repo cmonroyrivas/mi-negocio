@@ -3,7 +3,7 @@
 // IMPORTANTE: cada vez que cambies cualquier archivo de la app, sube CACHE_VERSION
 // (y APP_VERSION en js/config.js). Así los celulares bajan la versión nueva y
 // muestran el aviso "Hay una versión nueva, toca para actualizar".
-const CACHE_VERSION = 'mi-negocio-v1.0.0';
+const CACHE_VERSION = 'mi-negocio-v1.1.0';
 
 const ARCHIVOS = [
   './',

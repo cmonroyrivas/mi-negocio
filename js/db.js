@@ -80,6 +80,9 @@ export const listar = (store) => conStore(store, 'readonly', (s) => s.getAll());
 export const contar = (store) => conStore(store, 'readonly', (s) => s.count());
 export const listarPorFecha = (store, fecha) =>
   conStore(store, 'readonly', (s) => s.index('fecha').getAll(fecha));
+// Desde y hasta incluidos ('YYYY-MM-DD').
+export const listarEntreFechas = (store, desde, hasta) =>
+  conStore(store, 'readonly', (s) => s.index('fecha').getAll(IDBKeyRange.bound(desde, hasta)));
 
 // Los últimos `limite` registros por fecha (más nuevos primero). Para las sugerencias.
 export async function recientes(store, limite) {

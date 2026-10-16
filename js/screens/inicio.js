@@ -1,6 +1,6 @@
 // Inicio: saldo de hoy y accesos grandes. La primera vez, la bienvenida.
-import { leerConfig, guardarConfig, listarPorFecha } from '../db.js';
-import { pesos, hoyISO, normalizarWhatsapp } from '../format.js';
+import { leerConfig, guardarConfig, listarPorFecha, listarEntreFechas } from '../db.js';
+import { pesos, hoyISO, normalizarWhatsapp, nombreMes, inicioDeMes } from '../format.js';
 import { h, anexar, rellenar, icono, ir, aviso, puedeInstalar, instalar } from '../ui.js';
 import { debeRecordarRespaldo, compartirRespaldo, elegirYRecuperar } from '../backup.js';
 
@@ -11,15 +11,21 @@ export async function render(vista) {
   if (!perfil) return renderBienvenida(vista);
 
   const hoy = hoyISO();
-  const [ventas, gastos, recordarRespaldo] = await Promise.all([
+  const [ventas, gastos, ventasMes, gastosMes, recordarRespaldo] = await Promise.all([
     listarPorFecha('ventas', hoy),
     listarPorFecha('gastos', hoy),
+    listarEntreFechas('ventas', inicioDeMes(hoy), hoy),
+    listarEntreFechas('gastos', inicioDeMes(hoy), hoy),
     debeRecordarRespaldo(),
   ]);
   const entro = suma(ventas);
   const salio = suma(gastos);
   const quedo = entro - salio;
   const nada = ventas.length + gastos.length === 0;
+  const entroMes = suma(ventasMes);
+  const salioMes = suma(gastosMes);
+  const quedoMes = entroMes - salioMes;
+  const hayMes = ventasMes.length + gastosMes.length > 0;
 
   const zonaInstalar = h('div');
   const pintarInstalar = () => {
@@ -53,7 +59,7 @@ export async function render(vista) {
     ),
     h(
       'section',
-      { class: 'saldo', 'aria-label': 'Cómo vas hoy' },
+      { class: 'saldo', 'aria-label': 'Cómo vas' },
       h('p', { class: 'saldo-etiqueta' }, 'Hoy te quedó'),
       h('p', { class: 'saldo-monto numero' + (quedo < 0 ? ' negativo' : '') }, pesos(quedo)),
       h(
@@ -61,6 +67,19 @@ export async function render(vista) {
         { class: 'saldo-detalle' },
         nada ? 'Todavía no anotas nada hoy.' : `Vendiste ${pesos(entro)} · Gastaste ${pesos(salio)}`,
       ),
+      // Lo que lleva el mes, desde el día 1 hasta hoy
+      hayMes &&
+        h(
+          'div',
+          { class: 'saldo-mes' },
+          h(
+            'p',
+            { class: 'saldo-mes-fila' },
+            h('span', {}, `En ${nombreMes(hoy)} te quedó`),
+            h('span', { class: 'saldo-mes-monto numero' + (quedoMes < 0 ? ' negativo' : '') }, pesos(quedoMes)),
+          ),
+          h('p', { class: 'saldo-detalle' }, `Vendiste ${pesos(entroMes)} · Gastaste ${pesos(salioMes)}`),
+        ),
     ),
     recordarRespaldo &&
       h(
