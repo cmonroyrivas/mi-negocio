@@ -43,26 +43,14 @@ sin internet (el celular exige una dirección segura `https`, ver punto 3).
 2. Con el celular conectado **al mismo wifi**, abre Chrome y entra a
    `http://192.168.1.25:8000` (con el número que te salió).
 
-## 3. Publicar gratis en GitHub Pages (para que las usuarias la instalen)
+## 3. Dónde está publicada
 
-Se hace una sola vez. Después solo se suben los cambios.
-
-1. Crea una cuenta gratis en **https://github.com** (si no tienes).
-2. Arriba a la derecha, botón **+** → **New repository**.
-   - Nombre: `mi-negocio`
-   - Marca **Public** (GitHub Pages gratis necesita que sea público; solo se publica
-     el programa, **nunca** los datos de las usuarias, que viven en sus celulares).
-   - Clic en **Create repository**.
-3. En la página que aparece, clic en **uploading an existing file**.
-4. Arrastra **todo lo que está dentro** de la carpeta `mi-negocio`
-   (`index.html`, `manifest.webmanifest`, `sw.js` y las carpetas `css`, `js`, `icons`, `tests`).
-   Abajo, clic en **Commit changes**.
-5. Ve a **Settings** → **Pages** (menú de la izquierda).
-   En "Branch" elige **main** y **/ (root)** → **Save**.
-6. Espera 1 o 2 minutos y recarga. Aparecerá el enlace, parecido a:
-   **https://TU-USUARIO.github.io/mi-negocio/**
-
-Ese es el enlace que se comparte con las usuarias (por WhatsApp, o en un código QR impreso).
+- **Enlace para las usuarias:** https://cmonroyrivas.github.io/mi-negocio/
+  (se comparte por WhatsApp o en un código QR impreso).
+- **Código:** https://github.com/cmonroyrivas/mi-negocio (público, gratis con GitHub Pages).
+  Ahí está solo el programa: los datos de las usuarias **nunca** se suben, viven en sus celulares.
+- Se publica sola desde la rama `main`, 1 o 2 minutos después de subir cambios.
+- `CLAUDE.md` (notas internas del proyecto) queda solo en este computador; no se publica.
 
 ## 4. Cómo la instalan las usuarias
 
@@ -85,7 +73,10 @@ Cada vez que se cambie algo de la app:
 
 1. En `sw.js`, cambia el número en `CACHE_VERSION` (por ejemplo de `v1.0.0` a `v1.0.1`).
 2. En `js/config.js`, cambia `APP_VERSION` al mismo número (`1.0.1`).
-3. Sube los archivos cambiados a GitHub (en el repositorio: **Add file → Upload files**).
+3. Sube los cambios a GitHub. Hay dos formas:
+   - Pedirle a Claude Code "sube los cambios" (usa la herramienta de GitHub instalada en
+     `~/.local/bin/gh`, ya conectada a la cuenta `cmonroyrivas`).
+   - O en la página del repositorio: **Add file → Upload files** y arrastrar los archivos cambiados.
 
 Las usuarias verán arriba: **"Hay una versión nueva, toca para actualizar"**.
 Sus datos **no** se pierden al actualizar.
