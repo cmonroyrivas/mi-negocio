@@ -1,8 +1,8 @@
-// Ajustes: datos del negocio, respaldo, cómo instalar y borrar todo.
+// Ajustes: datos del negocio, facilitadora, respaldo, cómo instalar y borrar todo.
 import { APP_VERSION, TEXTOS, DIAS_RECORDATORIO_RESPALDO } from '../config.js';
-import { leerConfig, guardarConfig, vaciarTodo, asegurarMeta, contar } from '../db.js';
+import { leerConfig, guardarConfig, borrar, vaciarTodo, asegurarMeta, contar } from '../db.js';
 import { fechaCompleta, normalizarWhatsapp, whatsappParaMostrar } from '../format.js';
-import { h, rellenar, icono, ir, volver, aviso, confirmar, encabezado, estaInstalada, puedeInstalar, instalar } from '../ui.js';
+import { h, anexar, rellenar, icono, ir, volver, aviso, confirmar, encabezado, estaInstalada, puedeInstalar, instalar } from '../ui.js';
 import { compartirRespaldo, descargarRespaldo, diasSinRespaldo, elegirYRecuperar } from '../backup.js';
 
 const RUBROS = [
@@ -26,6 +26,7 @@ export async function render(vista) {
   vista.append(
     encabezado('Ajustes', { alVolver: () => volver('/') }),
     await seccionPerfil(perfil),
+    await seccionFacilitadora(),
     await seccionRespaldo(),
     seccionInstalar,
     seccionBorrar(),
@@ -130,6 +131,159 @@ async function seccionPerfil(perfil) {
       h('datalist', { id: 'lista-rubros' }, RUBROS.map((r) => h('option', { value: r }))),
       error,
       h('div', { class: 'pila-botones' }, h('button', { type: 'submit', class: 'boton boton-principal boton-bloque' }, icono('check'), 'Guardar cambios')),
+    ),
+  );
+}
+
+// ---- Mi facilitadora (para mandarle el resumen desde Mi semana) ----
+async function seccionFacilitadora() {
+  const actual = await leerConfig('facilitadora');
+  const error = h('p', { class: 'error', role: 'alert' });
+  const entradaNombre = h('input', {
+    class: 'entrada',
+    id: 'facilitadora-nombre',
+    type: 'text',
+    maxlength: '40',
+    autocomplete: 'off',
+    autocapitalize: 'words',
+    placeholder: 'Ej: Carla',
+    value: actual?.nombre ?? '',
+  });
+  const entradaWhatsapp = h('input', {
+    class: 'entrada',
+    id: 'facilitadora-wsp',
+    type: 'tel',
+    inputmode: 'tel',
+    autocomplete: 'off',
+    maxlength: '16',
+    placeholder: '9 1234 5678',
+    value: whatsappParaMostrar(actual?.whatsapp),
+  });
+
+  const guardarFacilitadora = async (e) => {
+    e.preventDefault();
+    const nombre = entradaNombre.value.trim();
+    const whatsapp = normalizarWhatsapp(entradaWhatsapp.value);
+    if (!nombre) return mostrarErrorCampo(error, 'Escribe el nombre de tu facilitadora.', entradaNombre);
+    if (!whatsapp) return mostrarErrorCampo(error, 'Revisa el WhatsApp: son 9 números y empieza con 9.', entradaWhatsapp);
+    error.replaceChildren();
+    await guardarConfig({ clave: 'facilitadora', nombre, whatsapp });
+    aviso('Guardado ✔');
+    ir('/ajustes', { reemplazar: true });
+  };
+
+  const quitarFacilitadora = async () => {
+    const ok = await confirmar({
+      titulo: `¿Quitar a ${actual.nombre} como tu facilitadora?`,
+      texto: 'Ya no aparecerá el botón para mandarle tu resumen.',
+      si: 'Sí, quitar',
+      no: 'No, dejarla',
+      peligro: true,
+    });
+    if (!ok) return;
+    await borrar('config', 'facilitadora');
+    aviso('Listo, la quité.', {
+      deshacer: async () => {
+        await guardarConfig(actual);
+        ir('/ajustes', { reemplazar: true });
+      },
+    });
+    ir('/ajustes', { reemplazar: true });
+  };
+
+  return h(
+    'section',
+    { class: 'seccion', 'aria-labelledby': 'titulo-facilitadora' },
+    h('h2', { id: 'titulo-facilitadora' }, 'Mi facilitadora'),
+    h(
+      'form',
+      { class: 'tarjeta-seccion', novalidate: true, onsubmit: guardarFacilitadora },
+      h(
+        'p',
+        { class: 'campo-ayuda' },
+        actual
+          ? `Desde Mi semana puedes mandarle tu resumen a ${actual.nombre} por WhatsApp.`
+          : 'Si tu facilitadora te mandó un enlace, ábrelo y quedará anotada aquí. Así puedes mandarle tu resumen desde Mi semana.',
+      ),
+      h('div', { class: 'campo' }, h('label', { class: 'campo-etiqueta', for: 'facilitadora-nombre' }, 'Nombre'), entradaNombre),
+      h(
+        'div',
+        { class: 'campo' },
+        h('label', { class: 'campo-etiqueta', for: 'facilitadora-wsp' }, 'WhatsApp'),
+        h('div', { class: 'con-prefijo' }, h('span', { class: 'prefijo', 'aria-hidden': 'true' }, '+56'), entradaWhatsapp),
+      ),
+      error,
+      h(
+        'div',
+        { class: 'pila-botones' },
+        h('button', { type: 'submit', class: 'boton boton-principal boton-bloque' }, icono('check'), 'Guardar'),
+        actual && h('button', { type: 'button', class: 'boton-texto', onclick: quitarFacilitadora }, icono('cerrar'), 'Quitar facilitadora'),
+      ),
+    ),
+  );
+}
+
+function mostrarErrorCampo(error, texto, campo) {
+  error.replaceChildren(icono('alerta'), texto);
+  campo.setAttribute('aria-invalid', 'true');
+  campo.focus();
+  campo.addEventListener('input', () => campo.removeAttribute('aria-invalid'), { once: true });
+}
+
+// Pantalla que abre el enlace de la facilitadora: #/facilitadora?nombre=Carla&wsp=569XXXXXXXX
+export async function renderFacilitadora(vista, datos) {
+  const nombre = (datos.get('nombre') || '').trim().slice(0, 40);
+  const whatsapp = normalizarWhatsapp(datos.get('wsp') || '');
+  const alInicio = () => ir('/', { reemplazar: true });
+  vista.append(encabezado('Tu facilitadora', { alVolver: alInicio }));
+
+  if (!nombre || !whatsapp) {
+    anexar(
+      vista,
+      h('p', { class: 'vacio' }, 'Este enlace no está completo. Pídele a tu facilitadora que te lo mande de nuevo.'),
+      h('div', { class: 'pila-botones' }, h('button', { type: 'button', class: 'boton boton-secundario boton-bloque', onclick: alInicio }, 'Ir al inicio')),
+    );
+    return;
+  }
+
+  const actual = await leerConfig('facilitadora');
+  const numeroVisible = `+56 ${whatsappParaMostrar(whatsapp)}`;
+  if (actual?.nombre === nombre && actual?.whatsapp === whatsapp) {
+    anexar(
+      vista,
+      h('h2', { class: 'pregunta' }, `${nombre} ya es tu facilitadora ✔`),
+      h('p', { class: 'pregunta-ayuda' }, 'Desde Mi semana puedes mandarle tu resumen cuando quieras.'),
+      h('div', { class: 'pila-botones' }, h('button', { type: 'button', class: 'boton boton-principal boton-bloque', onclick: alInicio }, 'Ir al inicio')),
+    );
+    return;
+  }
+
+  const guardarla = async () => {
+    await guardarConfig({ clave: 'facilitadora', nombre, whatsapp });
+    aviso(`Listo ✔ ${nombre} quedó como tu facilitadora`);
+    alInicio();
+  };
+
+  anexar(
+    vista,
+    h('h2', { class: 'pregunta' }, `¿Guardar a ${nombre} como tu facilitadora?`),
+    h(
+      'p',
+      { class: 'facilitadora-numero' },
+      icono('contacto'),
+      h('span', {}, h('strong', {}, nombre), h('span', { class: 'sin-cortar' }, `WhatsApp ${numeroVisible}`)),
+    ),
+    h(
+      'p',
+      { class: 'pregunta-ayuda' },
+      `Así, desde Mi semana podrás mandarle tu resumen por WhatsApp cuando quieras. ${nombre} no ve nada de tu app si tú no se lo mandas.`,
+    ),
+    actual && h('p', { class: 'nota' }, icono('info'), `Hoy tienes anotada a ${actual.nombre}. Se cambiará por ${nombre}.`),
+    h(
+      'div',
+      { class: 'pila-botones' },
+      h('button', { type: 'button', class: 'boton boton-principal boton-bloque boton-guardar', onclick: guardarla }, icono('check'), 'Sí, guardar'),
+      h('button', { type: 'button', class: 'boton boton-secundario boton-bloque', onclick: alInicio }, 'No, gracias'),
     ),
   );
 }

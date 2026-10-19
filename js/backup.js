@@ -76,7 +76,7 @@ const VALIDOS = {
   ventas: (r) => esId(r?.id) && esFecha(r.fecha) && esMonto(r.monto),
   gastos: (r) => esId(r?.id) && esFecha(r.fecha) && esMonto(r.monto),
   productos: (r) => esId(r?.id) && typeof r.nombre === 'string',
-  config: (r) => typeof r?.clave === 'string' && ['perfil', 'meta'].includes(r.clave),
+  config: (r) => typeof r?.clave === 'string' && ['perfil', 'meta', 'facilitadora'].includes(r.clave),
 };
 
 // Lee y revisa el archivo. No guarda nada todavía.
