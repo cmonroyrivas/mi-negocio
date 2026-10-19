@@ -1,9 +1,11 @@
 // Ajustes: datos del negocio, facilitadora, respaldo, cómo instalar y borrar todo.
-import { APP_VERSION, TEXTOS, DIAS_RECORDATORIO_RESPALDO } from '../config.js';
+import { APP_VERSION, TEXTOS, DIAS_RECORDATORIO_RESPALDO, URL_APP } from '../config.js';
 import { leerConfig, guardarConfig, borrar, vaciarTodo, asegurarMeta, contar } from '../db.js';
 import { fechaCompleta, normalizarWhatsapp, whatsappParaMostrar } from '../format.js';
 import { h, anexar, rellenar, icono, ir, volver, aviso, confirmar, encabezado, estaInstalada, puedeInstalar, instalar } from '../ui.js';
 import { compartirRespaldo, descargarRespaldo, diasSinRespaldo, elegirYRecuperar } from '../backup.js';
+import { compartirTexto } from '../whatsapp.js';
+import { qrSVG } from '../qr.js';
 
 const RUBROS = [
   'Amasandería',
@@ -29,6 +31,7 @@ export async function render(vista) {
     await seccionFacilitadora(),
     await seccionRespaldo(),
     seccionInstalar,
+    seccionCompartirApp(),
     seccionBorrar(),
     h('p', { class: 'version' }, `Mi Negocio · versión ${APP_VERSION}`),
   );
@@ -79,9 +82,11 @@ async function seccionPerfil(perfil) {
       nombrePersona: String(datos.get('nombrePersona')).trim(),
       rubro: String(datos.get('rubro')).trim(),
       whatsapp,
+      esSubsistencia: datos.get('esSubsistencia') === 'si',
     });
     entradaWhatsapp.value = whatsappParaMostrar(whatsapp);
-    aviso('Guardado ✔');
+    aviso(datos.get('esSubsistencia') === 'si' && !perfil.esSubsistencia ? 'Guardado ✔ Mira tu tope en el inicio.' : 'Guardado ✔');
+    perfil.esSubsistencia = datos.get('esSubsistencia') === 'si';
   };
 
   return h(
@@ -129,6 +134,17 @@ async function seccionPerfil(perfil) {
         placeholder: 'Ej: amasandería',
       }),
       h('datalist', { id: 'lista-rubros' }, RUBROS.map((r) => h('option', { value: r }))),
+      h(
+        'label',
+        { class: 'casilla', for: 'ajustes-subsistencia' },
+        h('input', { type: 'checkbox', id: 'ajustes-subsistencia', name: 'esSubsistencia', value: 'si', checked: !!perfil.esSubsistencia }),
+        h(
+          'span',
+          {},
+          h('span', { class: 'campo-etiqueta' }, 'Estoy en Registro de Subsistencia'),
+          h('span', { class: 'campo-ayuda' }, 'Te mostramos cuánto llevas vendido frente al tope de 5 UTM.'),
+        ),
+      ),
       error,
       h('div', { class: 'pila-botones' }, h('button', { type: 'submit', class: 'boton boton-principal boton-bloque' }, icono('check'), 'Guardar cambios')),
     ),
@@ -409,6 +425,29 @@ function contenidoInstalar() {
           ),
         ],
   ];
+}
+
+// ---- Compartir la app (QR para que otra persona la instale) ----
+function seccionCompartirApp() {
+  const compartir = async (e) => {
+    const boton = e.currentTarget;
+    boton.disabled = true;
+    await compartirTexto(`Mi Negocio: app gratis para anotar ventas y gastos y calcular precios. Funciona sin internet.\n${URL_APP}`);
+    boton.disabled = false;
+  };
+  return h(
+    'section',
+    { class: 'seccion', 'aria-labelledby': 'titulo-compartir-app' },
+    h('h2', { id: 'titulo-compartir-app' }, 'Compartir la app'),
+    h(
+      'div',
+      { class: 'tarjeta-seccion' },
+      h('p', {}, 'Muestra este código a otra persona. Lo escanea con la cámara de su celular y abre Mi Negocio para instalarla.'),
+      h('div', { class: 'qr-caja' }, qrSVG(URL_APP, { titulo: 'Código QR para abrir Mi Negocio' })),
+      h('p', { class: 'enlace-app' }, URL_APP),
+      h('div', { class: 'pila-botones' }, h('button', { type: 'button', class: 'boton boton-secundario boton-bloque', onclick: compartir }, icono('compartir'), 'Compartir el enlace')),
+    ),
+  );
 }
 
 // ---- Borrar todo ----

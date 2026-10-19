@@ -1,6 +1,6 @@
 // Constantes de la app.
 // Si cambias APP_VERSION, cambia también CACHE_VERSION en sw.js (deben ir juntas).
-export const APP_VERSION = '1.2.0';
+export const APP_VERSION = '1.3.0';
 
 // Cuánto dura el botón "Deshacer" después de anotar, cambiar o borrar.
 export const DESHACER_MS = 5000;
@@ -21,10 +21,27 @@ export const GANANCIAS = [
   { etiqueta: 'Harto', porcentaje: 100, frase: 'Lo cobramos al doble (100%) para que ganes' },
 ];
 
+// Dirección pública de la app (para el QR y para compartir el enlace).
+export const URL_APP = 'https://cmonroyrivas.github.io/mi-negocio/';
+
+// ---- Registro de Subsistencia ----
+// Valor de la UTM de cada mes, según el SII (sii.cl → Valores y fechas → UTM).
+// Agregar el mes nuevo cuando se publique. La regla usa la UTM del mes ANTERIOR al de hoy;
+// si falta ese mes, se usa el último que esté anotado aquí.
+export const UTM_POR_MES = {
+  '2026-09': 71721,
+  '2026-10': 72151,
+};
+export const TOPE_SUBSISTENCIA_UTM = 5; // tope de referencia: 5 UTM al mes
+export const MESES_PROMEDIO = 6; // promedio de los últimos 6 meses
+export const UMBRAL_AMARILLO = 70; // % del tope desde el que se avisa en amarillo
+export const UMBRAL_ROJO = 90; // % del tope desde el que se avisa en rojo
+
 // Textos legales y de privacidad: usar tal cual (CLAUDE.md §8).
 export const TEXTOS = {
   legalCaja: 'Esta app te ayuda a llevar tus cuentas. No reemplaza boletas ni facturas.',
   privacidad:
     'Tus datos están solo en este celular. Nadie más los ve. Si borras los datos del navegador o cambias de celular, se pierden. Guarda tu respaldo.',
   tiempoVale: 'Si tu tiempo también vale, súmalo como un gasto.',
+  guiaSubsistencia: 'Esto es una guía. Para estar segura, consulta con el SII o con tu facilitadora.',
 };

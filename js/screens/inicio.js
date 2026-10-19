@@ -3,6 +3,7 @@ import { leerConfig, guardarConfig, listarPorFecha, listarEntreFechas } from '..
 import { pesos, hoyISO, normalizarWhatsapp, nombreMes, inicioDeMes } from '../format.js';
 import { h, anexar, rellenar, icono, ir, aviso, puedeInstalar, instalar } from '../ui.js';
 import { debeRecordarRespaldo, compartirRespaldo, elegirYRecuperar } from '../backup.js';
+import { mesFrenteAlTope, barraTope } from './subsistencia.js';
 
 const suma = (lista) => lista.reduce((total, r) => total + r.monto, 0);
 
@@ -81,6 +82,7 @@ export async function render(vista) {
           h('p', { class: 'saldo-detalle' }, `Vendiste ${pesos(entroMes)} · Gastaste ${pesos(salioMes)}`),
         ),
     ),
+    perfil.esSubsistencia && avisoSubsistencia(mesFrenteAlTope(entroMes, hoy)),
     recordarRespaldo &&
       h(
         'div',
@@ -124,6 +126,22 @@ export async function render(vista) {
   );
 
   return () => window.removeEventListener('instalable', pintarInstalar);
+}
+
+// Registro de Subsistencia: cuánto del tope lleva este mes (toca para ver el detalle).
+function avisoSubsistencia(r) {
+  return h(
+    'a',
+    { href: '#/subsistencia', class: 'aviso-subsistencia nivel-' + r.nivel },
+    h(
+      'span',
+      { class: 'aviso-subsistencia-texto' },
+      h('span', {}, 'Subsistencia · este mes'),
+      h('strong', {}, `${Math.round(r.porcentaje)}% del tope`),
+    ),
+    barraTope(r),
+    h('span', { class: 'aviso-subsistencia-mas' }, r.nivel === 'verde' ? 'Vas bien' : r.nivel === 'amarillo' ? 'Ojo, te acercas' : 'Muy cerca del tope', icono('derecha')),
+  );
 }
 
 function tarjeta(href, clase, nombreIcono, titulo, texto) {

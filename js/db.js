@@ -84,6 +84,16 @@ export const listarPorFecha = (store, fecha) =>
 export const listarEntreFechas = (store, desde, hasta) =>
   conStore(store, 'readonly', (s) => s.index('fecha').getAll(IDBKeyRange.bound(desde, hasta)));
 
+// La fecha más antigua anotada en un store ('YYYY-MM-DD'), o null si no hay nada.
+export async function primeraFecha(store) {
+  const bd = await abrir();
+  const tx = bd.transaction(store, 'readonly');
+  const fin = finDe(tx);
+  const cursor = await aPromesa(tx.objectStore(store).index('fecha').openCursor());
+  await fin;
+  return cursor ? cursor.value.fecha : null;
+}
+
 // Los últimos `limite` registros por fecha (más nuevos primero). Para las sugerencias.
 export async function recientes(store, limite) {
   const bd = await abrir();

@@ -6,6 +6,7 @@ import * as caja from './screens/caja.js';
 import * as precio from './screens/precio.js';
 import * as catalogo from './screens/catalogo.js';
 import * as semana from './screens/semana.js';
+import * as subsistencia from './screens/subsistencia.js';
 import * as ajustes from './screens/ajustes.js';
 
 // Cada ruta: patrón y función que dibuja la pantalla. Las pantallas que muestran
@@ -22,7 +23,9 @@ const RUTAS = [
   { patron: /^\/catalogo\/nuevo$/, pantalla: (v) => catalogo.renderProducto(v, {}) },
   { patron: /^\/catalogo\/editar\/([\w-]+)$/, pantalla: (v, [id]) => catalogo.renderProducto(v, { id }) },
   { patron: /^\/catalogo\/pedido$/, pantalla: catalogo.renderPedido },
+  { patron: /^\/catalogo\/qr$/, pantalla: catalogo.renderQR },
   { patron: /^\/semana$/, pantalla: semana.render, refrescar: true },
+  { patron: /^\/subsistencia$/, pantalla: subsistencia.render, refrescar: true },
   { patron: /^\/ajustes$/, pantalla: ajustes.render },
   { patron: /^\/facilitadora$/, pantalla: (v, _, datos) => ajustes.renderFacilitadora(v, datos) },
 ];
