@@ -69,6 +69,7 @@ const TRAZOS = {
   subio: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   bajo: '<path d="M12 5v14M6 13l6 6 6-6"/>',
   igual: '<path d="M5 9h14M5 15h14"/>',
+  qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 20.5h.5M20.5 14h.5"/>',
 };
 
 export function icono(nombre, clase = '') {

@@ -4,6 +4,7 @@ import { agregar, guardar, obtener, borrar, listar, leerConfig, nuevoId } from '
 import { pesos, numero, leerMonto, hoyISO, normalizarWhatsapp, whatsappParaMostrar } from '../format.js';
 import { h, anexar, icono, ir, volver, aviso, confirmar, avisarCambio, encabezado } from '../ui.js';
 import { abrirWhatsApp, compartirTexto } from '../whatsapp.js';
+import { dibujarQREnCanvas } from '../qr.js';
 
 const MAX_FOTO = 60 * 1024; // largo máximo de la foto guardada (dataURL), unos 60 KB
 
@@ -132,6 +133,7 @@ export async function render(vista) {
         { class: 'pila-botones' },
         h('a', { href: '#/catalogo/nuevo', class: 'boton boton-principal boton-bloque' }, icono('mas'), 'Agregar producto'),
         h('a', { href: '#/precio', class: 'boton boton-secundario boton-bloque' }, icono('precio'), 'Ir a ¿Cuánto cobro?'),
+        h('a', { href: '#/catalogo/qr', class: 'boton boton-secundario boton-bloque' }, icono('qr'), 'Mi código QR para clientes'),
       ),
     );
     return;
@@ -151,6 +153,7 @@ export async function render(vista) {
       { class: 'pila-botones pila-arriba' },
       h('a', { href: '#/catalogo/pedido', class: 'boton boton-principal boton-bloque boton-guardar' }, icono('mensaje'), 'Armar pedido'),
       h('button', { type: 'button', class: 'boton boton-secundario boton-bloque', onclick: compartir }, icono('compartir'), 'Compartir mi catálogo'),
+      h('a', { href: '#/catalogo/qr', class: 'boton boton-secundario boton-bloque' }, icono('qr'), 'Mi código QR para clientes'),
     ),
     h(
       'div',
@@ -380,6 +383,145 @@ export async function renderProducto(vista, { id }) {
       ),
     ),
   );
+}
+
+// ---- Código QR para clientes: abre el WhatsApp del negocio con un saludo ----
+
+export function enlaceWhatsappNegocio(whatsapp) {
+  return `https://wa.me/${whatsapp}?text=${encodeURIComponent('Hola, quiero hacer un pedido')}`;
+}
+
+// Corta un texto en líneas que quepan en `ancho` (para el cartel).
+function envolver(ctx, texto, ancho) {
+  const lineas = [];
+  let actual = '';
+  for (const palabra of texto.split(/\s+/)) {
+    const prueba = actual ? `${actual} ${palabra}` : palabra;
+    if (actual && ctx.measureText(prueba).width > ancho) {
+      lineas.push(actual);
+      actual = palabra;
+    } else actual = prueba;
+  }
+  if (actual) lineas.push(actual);
+  return lineas;
+}
+
+const FUENTE_CARTEL = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+
+// Cartel de 1080 x 1440 (para imprimir o subir al estado): nombre, QR, "Escanea y pídeme por WhatsApp" y número.
+export async function crearCartel(perfil, enlace) {
+  const lienzo = document.createElement('canvas');
+  lienzo.width = 1080;
+  lienzo.height = 1440;
+  const ctx = lienzo.getContext('2d');
+  ctx.fillStyle = '#fbf6ec';
+  ctx.fillRect(0, 0, 1080, 1440);
+  ctx.strokeStyle = '#231c14';
+  ctx.lineWidth = 12;
+  ctx.strokeRect(30, 30, 1020, 1380);
+
+  // Nombre del negocio: hasta 2 líneas, achicando la letra si hace falta.
+  ctx.fillStyle = '#231c14';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  const nombre = perfil.nombreNegocio || 'Mi negocio';
+  let tamano = 76;
+  let lineas;
+  for (; tamano >= 44; tamano -= 8) {
+    ctx.font = `800 ${tamano}px ${FUENTE_CARTEL}`;
+    lineas = envolver(ctx, nombre, 900);
+    if (lineas.length <= 2) break;
+  }
+  lineas = lineas.slice(0, 2);
+  const altoLinea = tamano * 1.15;
+  const inicioNombre = lineas.length === 1 ? 210 : 175;
+  lineas.forEach((linea, i) => ctx.fillText(linea, 540, inicioNombre + i * altoLinea));
+
+  // QR con marco
+  ctx.fillStyle = '#231c14';
+  ctx.fillRect(162, 312, 756, 756);
+  dibujarQREnCanvas(ctx, enlace, 170, 320, 740);
+
+  ctx.fillStyle = '#231c14';
+  ctx.font = `800 64px ${FUENTE_CARTEL}`;
+  ctx.fillText('Escanea y pídeme', 540, 1160);
+  ctx.fillStyle = '#1d6a40';
+  ctx.fillText('por WhatsApp', 540, 1236);
+  ctx.fillStyle = '#574b3f';
+  ctx.font = `600 52px ${FUENTE_CARTEL}`;
+  ctx.fillText(`+56 ${whatsappParaMostrar(perfil.whatsapp)}`, 540, 1320);
+  ctx.font = `400 30px ${FUENTE_CARTEL}`;
+  ctx.fillText('Hecho con la app Mi Negocio', 540, 1385);
+
+  return new Promise((resolve) => lienzo.toBlob(resolve, 'image/png'));
+}
+
+function descargarArchivo(blob, nombre) {
+  const url = URL.createObjectURL(blob);
+  const enlace = h('a', { href: url, download: nombre });
+  document.body.append(enlace);
+  enlace.click();
+  enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+export async function renderQR(vista) {
+  const perfil = await leerConfig('perfil');
+  vista.append(encabezado('Mi código QR', { alVolver: () => volver('/catalogo') }));
+
+  if (!perfil?.whatsapp) {
+    anexar(
+      vista,
+      h('p', { class: 'vacio' }, 'Para crear tu código, primero anota el WhatsApp de tu negocio en Ajustes.'),
+      h('div', { class: 'pila-botones' }, h('a', { href: '#/ajustes', class: 'boton boton-principal boton-bloque' }, icono('ajustes'), 'Ir a Ajustes')),
+    );
+    return;
+  }
+
+  const blob = await crearCartel(perfil, enlaceWhatsappNegocio(perfil.whatsapp));
+  const urlImagen = URL.createObjectURL(blob);
+  const archivo = new File([blob], 'mi-codigo-qr.png', { type: 'image/png' });
+  const sePuedeCompartir = navigator.canShare?.({ files: [archivo] });
+
+  const compartir = async (e) => {
+    const boton = e.currentTarget;
+    boton.disabled = true;
+    try {
+      await navigator.share({ files: [archivo], title: 'Mi código QR' });
+    } catch (error) {
+      if (error.name !== 'AbortError') descargarArchivo(blob, archivo.name);
+    }
+    boton.disabled = false;
+  };
+  const guardarImagen = () => {
+    descargarArchivo(blob, archivo.name);
+    aviso('Imagen guardada en Descargas ✔');
+  };
+
+  anexar(
+    vista,
+    h(
+      'p',
+      { class: 'pregunta-ayuda' },
+      'Imprímelo y pégalo en tu local, o súbelo a tu estado de WhatsApp. Quien lo escanee con la cámara del celular te escribe directo a tu WhatsApp.',
+    ),
+    h('img', { class: 'cartel-qr', src: urlImagen, alt: `Cartel con código QR para escribirle por WhatsApp a ${perfil.nombreNegocio || 'tu negocio'}` }),
+    h(
+      'div',
+      { class: 'pila-botones' },
+      sePuedeCompartir &&
+        h('button', { type: 'button', class: 'boton boton-principal boton-bloque boton-guardar', onclick: compartir }, icono('compartir'), 'Compartir imagen'),
+      h(
+        'button',
+        { type: 'button', class: 'boton boton-bloque ' + (sePuedeCompartir ? 'boton-secundario' : 'boton-principal boton-guardar'), onclick: guardarImagen },
+        icono('descargar'),
+        'Guardar en este celular',
+      ),
+    ),
+    h('p', { class: 'pista' }, 'El código abre tu WhatsApp con el mensaje "Hola, quiero hacer un pedido". Si cambias tu número en Ajustes, vuelve a crear el cartel.'),
+  );
+
+  return () => URL.revokeObjectURL(urlImagen);
 }
 
 // ---- Armar pedido ----
