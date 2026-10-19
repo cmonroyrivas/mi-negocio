@@ -147,7 +147,8 @@ async function conceptosRecientes(store) {
   for (const r of await recientes(store, 200)) {
     const texto = (r.concepto || '').trim();
     const clave = texto.toLowerCase();
-    if (!texto || vistos.has(clave)) continue;
+    // Los pedidos del catálogo ("Pedido: 3 Pan...") no sirven como sugerencia.
+    if (!texto || vistos.has(clave) || clave.startsWith('pedido:')) continue;
     vistos.add(clave);
     lista.push(texto);
     if (lista.length >= MAX_SUGERENCIAS) break;

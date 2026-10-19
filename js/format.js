@@ -22,6 +22,19 @@ export function numero(n) {
   return fmtNumero.format(Math.round(Number(n) || 0));
 }
 
+const fmtUnDecimal = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 1 });
+
+// Para espacios chicos (gráfico): 950 -> "$950", 1500 -> "$1,5 mil", 12000 -> "$12 mil", 1250000 -> "$1,3 M"
+export function pesosCortos(n) {
+  const v = Math.round(Number(n) || 0);
+  if (Math.abs(v) < 1000) return pesos(v);
+  if (Math.abs(v) < 1e6) {
+    const miles = v / 1000;
+    return '$' + (Math.abs(miles) < 10 ? fmtUnDecimal.format(miles) : numero(miles)) + ' mil';
+  }
+  return '$' + fmtUnDecimal.format(v / 1e6) + ' M';
+}
+
 // "$ 12.000" o "12000" -> 12000. Si no hay número, 0.
 export function leerMonto(texto) {
   const soloDigitos = String(texto ?? '').replace(/\D/g, '');
@@ -91,6 +104,21 @@ export function inicioDeMes(iso) {
   return iso.slice(0, 8) + '01';
 }
 
+// "13 al 19 de octubre" o "28 de septiembre al 4 de octubre"
+export function rangoFechas(desde, hasta) {
+  const d1 = fechaDesdeISO(desde).getDate();
+  const d2 = fechaDesdeISO(hasta).getDate();
+  if (desde.slice(0, 7) === hasta.slice(0, 7)) return `${d1} al ${d2} de ${nombreMes(hasta)}`;
+  return `${d1} de ${nombreMes(desde)} al ${d2} de ${nombreMes(hasta)}`;
+}
+
+const DIAS_CORTOS = ['do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sá'];
+
+// '2026-10-19' -> 'lu'
+export function diaCorto(iso) {
+  return DIAS_CORTOS[fechaDesdeISO(iso).getDay()];
+}
+
 // "15 de octubre de 2026"
 export function fechaCompleta(isoOFecha) {
   const f = typeof isoOFecha === 'string' && isoOFecha.length === 10 ? fechaDesdeISO(isoOFecha) : new Date(isoOFecha);
@@ -109,10 +137,10 @@ export function fechaLocalDe(isoConHora) {
 
 // ---- WhatsApp ----
 
-// Acepta "9 1234 5678", "+56 9 1234 5678" o "912345678" y devuelve "56912345678".
-// Vacío devuelve ''. Si no se entiende, devuelve null.
+// Acepta "9 1234 5678", "+56 9 1234 5678", "912345678" o el antiguo "09 1234 5678"
+// y devuelve "56912345678". Vacío devuelve ''. Si no se entiende, devuelve null.
 export function normalizarWhatsapp(texto) {
-  let d = String(texto || '').replace(/\D/g, '');
+  let d = String(texto || '').replace(/\D/g, '').replace(/^0+/, '');
   if (!d) return '';
   if (d.length === 11 && d.startsWith('569')) d = d.slice(2);
   if (d.length === 8) d = '9' + d;

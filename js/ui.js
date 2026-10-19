@@ -60,6 +60,15 @@ const TRAZOS = {
   compartirIphone: '<path d="M12 3v12M8 7l4-4 4 4"/><path d="M7 10H5v11h14V10h-2"/>',
   agregarCuadro: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>',
   reloj: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  catalogo: '<path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  grafico:
+    '<path d="M4 20h16"/><rect x="5.5" y="11" width="3" height="6" rx="1"/><rect x="10.5" y="6" width="3" height="11" rx="1"/><rect x="15.5" y="13" width="3" height="4" rx="1"/>',
+  foto: '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/>',
+  mensaje: '<path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/>',
+  contacto: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  subio: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  bajo: '<path d="M12 5v14M6 13l6 6 6-6"/>',
+  igual: '<path d="M5 9h14M5 15h14"/>',
 };
 
 export function icono(nombre, clase = '') {

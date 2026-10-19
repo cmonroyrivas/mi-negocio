@@ -501,7 +501,7 @@ function paso5(vista) {
         : `Con este precio no ganas nada. Para ganar, cobra más de ${pesos(r.costoUnitario)}.`,
     );
 
-  const notaGuardado = h('p', { class: 'pista', hidden: !calculo.guardado }, 'Lo vas a ver como sugerencia cuando toques Vendí en Mi caja.');
+  const notaGuardado = h('p', { class: 'pista', hidden: !calculo.guardado }, 'Lo vas a ver en Mi catálogo y como sugerencia cuando toques Vendí.');
   const botonGuardar = h(
     'button',
     { type: 'button', class: 'boton boton-principal boton-bloque boton-guardar', onclick: () => guardarEnCatalogo() },
