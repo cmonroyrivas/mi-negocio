@@ -5,6 +5,8 @@ FOSIS Reparación y Emprendimiento 2026 a llevar su negocio día a día:
 
 - **Mi caja**: anotar lo que venden y gastan, y ver cuánto les quedó.
 - **¿Cuánto cobro?**: calcular el precio de un producto o servicio.
+- **Mi catálogo**: sus productos con precio y foto, compartir el catálogo y armar pedidos por WhatsApp.
+- **Mi semana**: gráfico de los últimos 7 días y resumen para mandar por WhatsApp.
 - **Ajustes**: datos del negocio y respaldo.
 
 No pide registro, correo ni contraseña. Funciona sin internet una vez instalada.
@@ -67,6 +69,23 @@ sin internet (el celular exige una dirección segura `https`, ver punto 3).
 
 Dentro de la app, en **Ajustes → Instalar la app**, están estas mismas instrucciones.
 
+## 4b. Tu enlace de facilitadora (para recibir los resúmenes)
+
+En **Mi semana**, cada usuaria puede mandarte su resumen por WhatsApp: últimos 7 días y mes en curso,
+con lo que vendió, gastó y le quedó, y cuántas ventas anotó. Para que el botón aparezca con tu nombre,
+cada una tiene que abrir **una vez** tu enlace:
+
+```
+https://cmonroyrivas.github.io/mi-negocio/#/facilitadora?nombre=TU-NOMBRE&wsp=569XXXXXXXX
+```
+
+- Cambia `TU-NOMBRE` por tu nombre (sin espacios, o usa `%20` en vez del espacio) y
+  `569XXXXXXXX` por tu WhatsApp (56 + 9 + los 8 números).
+- Mándales el enlace por WhatsApp. Al abrirlo, la app les pregunta si quieren guardarte; tocan **Sí, guardar**.
+- Tu número **no** queda escrito en el código público; solo viaja en el enlace que tú mandas.
+- También pueden anotarte a mano en **Ajustes → Mi facilitadora**.
+- Mandar el resumen es siempre voluntario: la app nunca envía nada sola.
+
 ## 5. Publicar una versión nueva
 
 Cada vez que se cambie algo de la app:
@@ -101,7 +120,7 @@ La lista de pruebas por pantalla está en [`tests/smoke.md`](tests/smoke.md).
 - HTML, CSS y JavaScript sin frameworks ni dependencias, sin paso de compilación.
 - Datos en IndexedDB del navegador (`js/db.js`). Montos en pesos enteros, fechas `AAAA-MM-DD`.
 - Service worker propio (`sw.js`): guarda la app para usarla sin internet.
-- Peso total: unos 140 KB (unos 50 KB transferidos comprimidos).
+- Peso total: unos 190 KB (unos 60 KB transferidos comprimidos).
 - Sin analítica, sin rastreadores, sin anuncios.
 
 ```
@@ -117,7 +136,8 @@ mi-negocio/
 │   ├── ui.js              botones, avisos, diálogos, teclado
 │   ├── format.js          pesos, fechas, redondeo, WhatsApp
 │   ├── backup.js          guardar y recuperar respaldo
-│   └── screens/           inicio, caja, precio, ajustes
+│   ├── whatsapp.js        abrir WhatsApp o el menú Compartir con un mensaje
+│   └── screens/           inicio, caja, precio, catálogo, semana, ajustes
 ├── icons/                 íconos de la app (icono.svg es el dibujo original)
 └── tests/smoke.md         lista de pruebas manuales
 ```

@@ -4,10 +4,13 @@ import { h, ir, cerrarDialogos, iniciarInstalacion } from './ui.js';
 import * as inicio from './screens/inicio.js';
 import * as caja from './screens/caja.js';
 import * as precio from './screens/precio.js';
+import * as catalogo from './screens/catalogo.js';
+import * as semana from './screens/semana.js';
 import * as ajustes from './screens/ajustes.js';
 
 // Cada ruta: patrón y función que dibuja la pantalla. Las pantallas que muestran
 // totales se vuelven a dibujar cuando cambian los datos (por ejemplo, al deshacer).
+// La pantalla recibe (vista, partes de la ruta, datos después del "?").
 const RUTAS = [
   { patron: /^\/$/, pantalla: inicio.render, refrescar: true },
   { patron: /^\/caja$/, pantalla: caja.render, refrescar: true },
@@ -15,7 +18,13 @@ const RUTAS = [
   { patron: /^\/caja\/gaste$/, pantalla: (v) => caja.renderFormulario(v, { tipo: 'gasto' }) },
   { patron: /^\/caja\/editar\/(venta|gasto)\/([\w-]+)$/, pantalla: (v, [tipo, id]) => caja.renderFormulario(v, { tipo, id }) },
   { patron: /^\/precio(?:\/(\d))?$/, pantalla: (v, [paso]) => precio.render(v, { paso: Number(paso) || 1 }) },
+  { patron: /^\/catalogo$/, pantalla: catalogo.render, refrescar: true },
+  { patron: /^\/catalogo\/nuevo$/, pantalla: (v) => catalogo.renderProducto(v, {}) },
+  { patron: /^\/catalogo\/editar\/([\w-]+)$/, pantalla: (v, [id]) => catalogo.renderProducto(v, { id }) },
+  { patron: /^\/catalogo\/pedido$/, pantalla: catalogo.renderPedido },
+  { patron: /^\/semana$/, pantalla: semana.render, refrescar: true },
   { patron: /^\/ajustes$/, pantalla: ajustes.render },
+  { patron: /^\/facilitadora$/, pantalla: (v, _, datos) => ajustes.renderFacilitadora(v, datos) },
 ];
 
 const raiz = document.getElementById('app');
@@ -23,13 +32,15 @@ let numeroRender = 0;
 let limpiarPantalla = null;
 let rutaActual = null;
 
+// "#/facilitadora?nombre=Carla&wsp=569..." -> { camino: '/facilitadora', datos: URLSearchParams }
 function rutaDelHash() {
-  return decodeURIComponent(location.hash.slice(1)) || '/';
+  const [camino, consulta = ''] = location.hash.slice(1).split('?');
+  return { camino: decodeURIComponent(camino) || '/', datos: new URLSearchParams(consulta) };
 }
 
 async function dibujar({ refresco = false } = {}) {
-  const ruta = rutaDelHash();
-  const hallada = RUTAS.map((r) => ({ r, m: ruta.match(r.patron) })).find((x) => x.m);
+  const { camino, datos } = rutaDelHash();
+  const hallada = RUTAS.map((r) => ({ r, m: camino.match(r.patron) })).find((x) => x.m);
   if (!hallada) {
     ir('/', { reemplazar: true });
     return;
@@ -41,7 +52,7 @@ async function dibujar({ refresco = false } = {}) {
   const vista = h('div', { class: 'vista' });
   let limpiar = null;
   try {
-    limpiar = await hallada.r.pantalla(vista, hallada.m.slice(1));
+    limpiar = await hallada.r.pantalla(vista, hallada.m.slice(1), datos);
   } catch (error) {
     console.error(error);
     vista.replaceChildren(pantallaError());

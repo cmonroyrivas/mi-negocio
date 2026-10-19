@@ -391,19 +391,21 @@ h2:focus {
   color: #ffb894;
 }
 
+/* Cuatro tarjetas en grilla de 2 x 2 para que todo quepa sin bajar */
 .tarjetas {
   display: grid;
-  gap: 16px;
-  margin-top: 24px;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
 }
 
 .tarjeta {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  align-items: center;
-  gap: 16px;
-  min-height: 112px;
-  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 140px;
+  padding: 14px;
   border: var(--borde);
   border-radius: var(--radio-grande);
   background: var(--superficie);
@@ -420,11 +422,12 @@ h2:focus {
 .tarjeta-icono {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: var(--borde);
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  flex: none;
 }
 
 .tarjeta-caja .tarjeta-icono {
@@ -437,9 +440,19 @@ h2:focus {
   color: var(--tinta);
 }
 
+.tarjeta-catalogo .tarjeta-icono {
+  background: var(--naranjo-claro);
+  color: var(--naranjo-hondo);
+}
+
+.tarjeta-semana .tarjeta-icono {
+  background: #e2e8f8;
+  color: #1a3a8f;
+}
+
 .tarjeta-titulo {
   display: block;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   line-height: 1.15;
 }
@@ -447,8 +460,16 @@ h2:focus {
 .tarjeta-texto {
   display: block;
   margin-top: 4px;
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.3;
   color: var(--tinta-suave);
+}
+
+/* Celulares muy angostos o con letra muy grande: una columna */
+@media (max-width: 330px) {
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Avisos dentro de la pantalla (no interrumpen) */
@@ -1532,6 +1553,376 @@ details.instrucciones[open] summary::after {
   text-align: center;
   font-size: 1rem;
   color: var(--tinta-suave);
+}
+
+/* ---------- Mi catálogo ---------- */
+
+.pila-botones.pila-arriba {
+  margin-top: 4px;
+}
+
+.titulo-con-accion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.titulo-con-accion .seccion-titulo {
+  margin-top: 0;
+}
+
+.productos {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border-top: var(--borde);
+}
+
+.productos li {
+  border-bottom: 2px dashed var(--linea);
+}
+
+.producto {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 10px 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.producto:active {
+  background: var(--papel-hondo);
+}
+
+.producto-foto {
+  width: 56px;
+  height: 56px;
+  border: 2px solid var(--linea);
+  border-radius: 12px;
+  background: var(--papel-hondo);
+  object-fit: cover;
+}
+
+.producto-foto.sin-foto {
+  display: grid;
+  place-items: center;
+  color: var(--tinta-suave);
+}
+
+.producto-foto-chica {
+  width: 48px;
+  height: 48px;
+}
+
+.producto-nombre {
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.producto-precio {
+  font-size: 1.25rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.vacio-grande {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 28px 16px;
+}
+
+.vacio-grande .icono {
+  width: 48px;
+  height: 48px;
+}
+
+/* Foto del producto */
+.zona-foto {
+  margin-bottom: 20px;
+}
+
+.agregar-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 120px;
+  border: 2px dashed var(--tinta-suave);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+  font-weight: 700;
+}
+
+.agregar-foto .icono {
+  width: 40px;
+  height: 40px;
+}
+
+.foto-grande {
+  width: 100%;
+  max-height: 260px;
+  border: var(--borde);
+  border-radius: var(--radio-grande);
+  object-fit: cover;
+}
+
+.foto-botones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.foto-botones .boton,
+.campo > .boton {
+  justify-self: start;
+  min-height: 48px;
+  box-shadow: var(--sombra-chica);
+}
+
+.foto-cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 120px;
+  border: 2px dashed var(--linea);
+  border-radius: var(--radio-grande);
+  color: var(--tinta-suave);
+  font-weight: 700;
+}
+
+/* Armar pedido */
+.pedido-lista {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.pedido-fila {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  grid-template-areas:
+    'foto info info'
+    'cantidad cantidad subtotal';
+  align-items: center;
+  gap: 10px 12px;
+  padding: 12px;
+  border: var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.pedido-fila.con-cantidad {
+  border-color: var(--verde-hondo);
+  background: var(--verde-claro);
+}
+
+.pedido-fila .producto-foto {
+  grid-area: foto;
+}
+
+.pedido-info {
+  grid-area: info;
+  display: grid;
+}
+
+.pedido-precio {
+  font-size: 1rem;
+  color: var(--tinta-suave);
+}
+
+.pedido-cantidad {
+  grid-area: cantidad;
+  display: grid;
+  grid-template-columns: 56px 64px 56px;
+  gap: 8px;
+}
+
+.pedido-cantidad .contador-boton {
+  height: 52px;
+}
+
+.pedido-numero {
+  min-height: 52px;
+  padding: 4px;
+  font-size: 1.375rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.pedido-subtotal {
+  grid-area: subtotal;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.pedido-pie {
+  margin-top: 16px;
+}
+
+.pedido-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.pedido-total-cuantos {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.pedido-total-monto {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+/* ---------- Mi semana ---------- */
+
+.rango-semana {
+  font-size: 1.125rem;
+  color: var(--tinta-suave);
+}
+
+.rango-semana strong {
+  color: var(--tinta);
+}
+
+.tarjeta-grafico {
+  margin-top: 14px;
+  padding: 14px 8px 4px;
+  border: var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.grafico-titulo {
+  padding: 0 8px;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.grafico {
+  width: 100%;
+  height: auto;
+  margin-top: 4px;
+  font-family: var(--fuente);
+}
+
+.grafico-base {
+  stroke: var(--linea);
+  stroke-width: 2;
+}
+
+.grafico-barra {
+  fill: var(--verde);
+}
+
+.grafico-barra.hoy {
+  fill: var(--mostaza);
+  stroke: var(--tinta);
+  stroke-width: 2;
+}
+
+.grafico-cero {
+  fill: var(--linea);
+}
+
+.grafico-valor {
+  fill: var(--tinta);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.grafico-dia {
+  fill: var(--tinta-suave);
+  font-size: 15px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.grafico-dia.hoy {
+  fill: var(--tinta);
+  font-weight: 800;
+}
+
+.grafico-fecha {
+  fill: var(--tinta-suave);
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.resumen-extra {
+  display: block;
+  font-size: 0.9375rem;
+  color: var(--tinta-suave);
+}
+
+.comparacion {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radio);
+  background: var(--papel-hondo);
+  font-weight: 700;
+}
+
+.comparacion-subio {
+  background: var(--verde-claro);
+  color: var(--verde-hondo);
+}
+
+.comparacion-bajo {
+  background: var(--naranjo-claro);
+  color: var(--naranjo-hondo);
+}
+
+.mes-semana {
+  margin-top: 12px;
+  color: var(--tinta-suave);
+}
+
+.facilitadora-numero {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.facilitadora-numero > span > * {
+  display: block;
+}
+
+.facilitadora-numero .sin-cortar {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ---------- Avisos abajo (toast) ---------- */

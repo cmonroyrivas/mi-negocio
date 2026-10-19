@@ -116,8 +116,10 @@ export async function render(vista) {
     h(
       'nav',
       { class: 'tarjetas', 'aria-label': 'Secciones' },
-      tarjeta('#/caja', 'tarjeta-caja', 'caja', 'Mi caja', 'Anota lo que vendes y lo que gastas'),
-      tarjeta('#/precio', 'tarjeta-precio', 'precio', '¿Cuánto cobro?', 'Calcula el precio de lo que vendes'),
+      tarjeta('#/caja', 'tarjeta-caja', 'caja', 'Mi caja', 'Anota lo que vendes y gastas'),
+      tarjeta('#/precio', 'tarjeta-precio', 'precio', '¿Cuánto cobro?', 'Calcula tus precios'),
+      tarjeta('#/catalogo', 'tarjeta-catalogo', 'catalogo', 'Mi catálogo', 'Tus productos y pedidos'),
+      tarjeta('#/semana', 'tarjeta-semana', 'grafico', 'Mi semana', 'Cómo te fue en 7 días'),
     ),
   );
 

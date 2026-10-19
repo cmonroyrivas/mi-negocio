@@ -88,6 +88,53 @@ qué se hizo y qué pasó.
 - [ ] **Calcular otro precio** vuelve al paso 1 vacío.
 - [ ] **Volver al inicio** lleva al inicio.
 
+## 3b. Mi catálogo (fase 3)
+
+- [ ] El inicio muestra 4 tarjetas en 2 columnas: Mi caja, ¿Cuánto cobro?, Mi catálogo, Mi semana.
+- [ ] Sin productos: "Todavía no tienes productos" con **Agregar producto** e **Ir a ¿Cuánto cobro?**.
+- [ ] **Agregar producto**: nombre y precio. Vacío → mensaje amable. Precio 0 → "Pon un precio mayor a $0".
+- [ ] Nombre repetido (aunque cambien mayúsculas) → "Ya tienes “…” en tu catálogo".
+- [ ] **Agregar foto**: elegir una foto del celular → aparece en grande; se guarda achicada (no más de 60 KB).
+      **Cambiar foto** y **Quitar foto** funcionan.
+- [ ] Si el producto vino de ¿Cuánto cobro?, al cambiar el precio dice "Te cuesta $X. Ganas $Y por cada una".
+- [ ] La lista muestra foto (o ícono), nombre y precio, ordenada por nombre.
+- [ ] **Quitar del catálogo** pregunta antes; **Deshacer** lo recupera. Las ventas anotadas no se borran.
+- [ ] **Compartir mi catálogo** abre el menú Compartir con la lista de productos y precios
+      (y "Haz tu pedido por WhatsApp al +56 …" si el negocio tiene WhatsApp).
+
+### Armar pedido
+- [ ] Cada producto tiene − cantidad +. Se puede escribir la cantidad. Los elegidos se marcan en verde con su subtotal.
+- [ ] Abajo, fijo: **Total** con cuántos productos, y **Enviar por WhatsApp**.
+- [ ] Sin productos elegidos → "Agrega al menos un producto con el botón +".
+- [ ] WhatsApp del cliente malo → mensaje amable. En blanco → WhatsApp pregunta a quién mandarlo.
+- [ ] Con número → se abre el chat de ese cliente con el detalle: cantidades, precios, total y "¡Gracias por tu pedido!".
+- [ ] En Android, **Elegir de mis contactos** trae el celular del contacto.
+- [ ] Después de enviar aparece "¿Ya te pagaron? Anótalo como venta".
+- [ ] **Anotar como venta** → "Anotado ✔ Vendí $X" con Deshacer; queda en Mi caja como "Pedido: 3 Pan amasado, 1 …".
+      El botón queda en "Anotado en Mi caja" (no se anota dos veces). Si se cambia el pedido, se puede anotar de nuevo.
+- [ ] Si sale del pedido y vuelve, sigue armado. **Empezar pedido nuevo** lo vacía (con Deshacer).
+- [ ] Los pedidos anotados no aparecen como sugerencia al tocar VENDÍ.
+
+## 3c. Mi semana (fase 3)
+
+- [ ] Dice "Últimos 7 días · 13 al 19 de octubre" (las fechas de hoy y 6 días atrás).
+- [ ] Gráfico de barras: una por día, con el monto arriba ("12 mil"), el día abajo y **hoy** destacado.
+      Los días sin ventas muestran una rayita.
+- [ ] Vendí (con cantidad de ventas) / Gasté / Me quedó de los 7 días, correctos.
+- [ ] "Vendiste $X más/menos que la semana anterior" (o "La semana anterior no anotaste ventas").
+- [ ] "En octubre: vendiste $X (N ventas) y te quedó $Y".
+- [ ] Sin facilitadora: botón **Compartir mi resumen** y aviso de pedirle su enlace.
+- [ ] Con facilitadora: **Enviar mi resumen a [nombre]** abre su chat de WhatsApp con el resumen de la semana y del mes,
+      cada uno con Vendí / Gasté / Me quedó y cantidad de ventas. **Compartir con otra persona** abre el menú Compartir.
+- [ ] El mensaje no trae datos de clientes.
+
+### Enlace de la facilitadora
+- [ ] Abrir `…/mi-negocio/#/facilitadora?nombre=Carla&wsp=569XXXXXXXX` → "¿Guardar a Carla como tu facilitadora?" con su número.
+- [ ] **Sí, guardar** → "Listo ✔ Carla quedó como tu facilitadora" y vuelve al inicio. **No, gracias** no guarda nada.
+- [ ] Abrirlo otra vez → "Carla ya es tu facilitadora ✔". Enlace sin número → "Este enlace no está completo…".
+- [ ] En Ajustes → **Mi facilitadora** se puede cambiar el nombre y número, o **Quitar facilitadora** (con Deshacer).
+- [ ] El respaldo guarda y recupera la facilitadora y las fotos de los productos.
+
 ## 4. Ajustes
 
 - [ ] Se ven y se pueden cambiar: nombre del negocio, tu nombre, WhatsApp y a qué te dedicas. **Guardar cambios** → "Guardado ✔".
