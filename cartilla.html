@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mi Negocio · Cartilla</title>
+    <meta name="description" content="Cartilla de una página para instalar y usar la app Mi Negocio.">
+    <link rel="icon" href="./icons/icon-192.png" type="image/png">
+    <style>
+      /* Cartilla para imprimir en una hoja tamaño carta. Colores y letras como la app. */
+      :root {
+        --papel: #fbf6ec;
+        --papel-hondo: #f2e9d8;
+        --tinta: #231c14;
+        --tinta-suave: #574b3f;
+        --verde: #1d6a40;
+        --verde-claro: #e1efe5;
+        --mostaza: #f3c24c;
+        --linea: #ddd0ba;
+        color-scheme: light;
+      }
+      @page {
+        size: letter;
+        margin: 12mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        background: #e9e3d8;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        color: var(--tinta);
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+        font-size: 13pt;
+        line-height: 1.35;
+      }
+      h1,
+      h2,
+      p,
+      ul,
+      ol {
+        margin: 0;
+      }
+      .hoja {
+        max-width: 190mm;
+        margin: 0 auto;
+        padding: 10mm;
+        border-radius: 12px;
+        background: var(--papel);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+      }
+      .imprimir {
+        display: block;
+        max-width: 190mm;
+        width: 100%;
+        min-height: 52px;
+        margin: 0 auto 14px;
+        border: 2px solid var(--tinta);
+        border-radius: 14px;
+        background: var(--verde);
+        color: #fff;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .cabecera {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid var(--tinta);
+      }
+      .cabecera img {
+        width: 64px;
+        height: 64px;
+      }
+      h1 {
+        font-size: 30pt;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .bajada {
+        font-size: 14pt;
+        color: var(--tinta-suave);
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 14px 0 8px;
+        font-size: 16pt;
+        font-weight: 800;
+      }
+      .numero-paso {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--tinta);
+        color: var(--papel);
+        font-size: 13pt;
+      }
+      .instalar {
+        display: grid;
+        grid-template-columns: 58mm 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      .qr-caja {
+        padding: 6px;
+        border: 2px solid var(--tinta);
+        border-radius: 10px;
+        background: #fff;
+        text-align: center;
+      }
+      .qr-caja svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .qr-caja p {
+        margin-top: 4px;
+        font-size: 10.5pt;
+        font-weight: 700;
+        line-height: 1.25;
+        white-space: nowrap;
+      }
+      .pasos {
+        display: grid;
+        gap: 6px;
+        padding-left: 0;
+        list-style: none;
+      }
+      .pasos li {
+        padding: 7px 10px;
+        border-radius: 10px;
+        background: var(--papel-hondo);
+      }
+      .pasos strong {
+        display: block;
+      }
+      .boton-dibujo {
+        display: inline-block;
+        padding: 0 6px;
+        border: 2px solid var(--tinta);
+        border-radius: 6px;
+        background: #fff;
+        font-weight: 800;
+      }
+      .funciones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 0;
+        list-style: none;
+      }
+      .funciones li {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 8px 10px;
+        border: 2px solid var(--tinta);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .icono-circulo {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--tinta);
+        border-radius: 50%;
+        background: var(--verde-claro);
+      }
+      .icono-circulo svg {
+        width: 22px;
+        height: 22px;
+      }
+      .funciones strong {
+        display: block;
+        font-size: 13.5pt;
+      }
+      .cuidado {
+        display: grid;
+        gap: 6px;
+        padding-left: 1.2em;
+      }
+      .pie {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 2px dashed var(--linea);
+        font-size: 11.5pt;
+        color: var(--tinta-suave);
+      }
+      .pie strong {
+        color: var(--tinta);
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 8px;
+          font-size: 12pt;
+        }
+        .hoja {
+          padding: 16px;
+        }
+        .instalar,
+        .funciones {
+          grid-template-columns: 1fr;
+        }
+        .qr-caja {
+          max-width: 220px;
+        }
+      }
+      @media print {
+        html,
+        body {
+          background: #fff;
+          padding: 0;
+        }
+        .hoja {
+          max-width: none;
+          padding: 0;
+          border-radius: 0;
+          box-shadow: none;
+          background: #fff;
+        }
+        .imprimir {
+          display: none;
+        }
+        * {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="imprimir" type="button" onclick="window.print()">Imprimir o guardar como PDF</button>
+    <main class="hoja">
+      <header class="cabecera">
+        <img src="./icons/icon-192.png" alt="">
+        <div>
+          <h1>Mi Negocio</h1>
+          <p class="bajada">La app gratis para llevar tu negocio en el celular. Funciona sin internet.</p>
+        </div>
+      </header>
+
+      <h2><span class="numero-paso">1</span> Instálala en tu celular</h2>
+      <section class="instalar">
+        <div class="qr-caja">
+          <div id="qr"></div>
+          <p id="enlace"></p>
+        </div>
+        <ol class="pasos">
+          <li>
+            <strong>Abre la app</strong>
+            Apunta la cámara del celular a este código y toca el enlace. O escribe la dirección en Chrome.
+          </li>
+          <li>
+            <strong>Android (Chrome)</strong>
+            Toca <span class="boton-dibujo">⋮</span> arriba a la derecha → <b>Instalar app</b> o <b>Agregar a la pantalla principal</b>.
+          </li>
+          <li>
+            <strong>iPhone (Safari)</strong>
+            Toca <span class="boton-dibujo">Compartir</span> abajo → <b>Agregar a inicio</b> → <b>Agregar</b>.
+          </li>
+          <li>
+            <strong>Listo</strong>
+            Ábrela desde su ícono. No pide correo ni contraseña.
+          </li>
+        </ol>
+      </section>
+
+      <h2><span class="numero-paso">2</span> Úsala todos los días</h2>
+      <ul class="funciones" id="funciones">
+        <li data-icono="caja"><span class="icono-circulo"></span><span><strong>Mi caja</strong>Toca <b>VENDÍ</b> o <b>GASTÉ</b>, pon el monto y <b>Guardar</b>. Mira cuánto te quedó hoy.</span></li>
+        <li data-icono="precio"><span class="icono-circulo"></span><span><strong>¿Cuánto cobro?</strong>Responde 4 preguntas y te dice cuánto cobrar y cuánto ganas.</span></li>
+        <li data-icono="catalogo"><span class="icono-circulo"></span><span><strong>Mi catálogo</strong>Tus productos con precio y foto. Arma pedidos y mándalos por WhatsApp.</span></li>
+        <li data-icono="grafico"><span class="icono-circulo"></span><span><strong>Mi semana</strong>Cómo te fue en 7 días. Manda tu resumen a tu facilitadora.</span></li>
+      </ul>
+
+      <h2><span class="numero-paso">3</span> Cuida tus datos</h2>
+      <ul class="cuidado">
+        <li>Tus datos están <b>solo en tu celular</b>. Nadie más los ve.</li>
+        <li>Cada 2 semanas: <b>Ajustes → Guardar mi respaldo</b> y mándatelo a tu propio WhatsApp.</li>
+        <li>Si cambias de celular, abre la app y toca <b>Recupera tu respaldo</b>.</li>
+      </ul>
+
+      <p class="pie">
+        <strong>Esta app te ayuda a llevar tus cuentas. No reemplaza boletas ni facturas.</strong><br>
+        ¿Dudas? Pregúntale a tu facilitadora.
+      </p>
+    </main>
+
+    <script type="module">
+      import { URL_APP } from './js/config.js';
+      import { qrSVG } from './js/qr.js';
+      import { icono } from './js/ui.js';
+
+      document.getElementById('qr').append(qrSVG(URL_APP, { titulo: 'Código QR para abrir Mi Negocio' }));
+      // La dirección en dos líneas, sin cortar en el guion de "mi-negocio"
+      const { host, pathname } = new URL(URL_APP);
+      document.getElementById('enlace').append(host, document.createElement('br'), pathname);
+      for (const li of document.querySelectorAll('#funciones [data-icono]')) {
+        li.querySelector('.icono-circulo').append(icono(li.dataset.icono));
+      }
+    </script>
+  </body>
+</html>

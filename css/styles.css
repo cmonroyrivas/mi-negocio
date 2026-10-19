@@ -1925,6 +1925,209 @@ details.instrucciones[open] summary::after {
   white-space: nowrap;
 }
 
+/* ---------- Registro de Subsistencia ---------- */
+
+.tope-referencia {
+  padding: 16px 18px;
+  border-radius: var(--radio-grande);
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.tope-referencia .detalle-tope {
+  color: #e9dfcd;
+}
+
+.tarjeta-tope {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 18px;
+  border: var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.tarjeta-tope h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.monto-tope {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.monto-tope span {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.detalle-tope {
+  font-size: 1rem;
+  color: var(--tinta-suave);
+}
+
+.barra-tope {
+  position: relative;
+  height: 22px;
+  border: var(--borde);
+  border-radius: 999px;
+  background: var(--papel-hondo);
+  overflow: hidden;
+}
+
+.barra-tope-relleno {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.nivel-verde .barra-tope-relleno,
+.barra-tope.nivel-verde .barra-tope-relleno {
+  background: var(--verde);
+}
+
+.nivel-amarillo .barra-tope-relleno,
+.barra-tope.nivel-amarillo .barra-tope-relleno {
+  background: var(--mostaza);
+}
+
+.nivel-rojo .barra-tope-relleno,
+.barra-tope.nivel-rojo .barra-tope-relleno {
+  background: var(--peligro);
+}
+
+.estado-tope {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radio);
+  font-weight: 600;
+}
+
+.estado-tope.nivel-verde {
+  background: var(--verde-claro);
+  color: var(--verde-hondo);
+}
+
+.estado-tope.nivel-amarillo {
+  background: var(--mostaza-claro);
+  color: var(--tinta);
+}
+
+.estado-tope.nivel-rojo {
+  background: var(--peligro-claro);
+  color: var(--peligro);
+}
+
+.explicacion-tope h2 {
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+/* Aviso chico en el inicio */
+.aviso-subsistencia {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
+  color: inherit;
+  text-decoration: none;
+}
+
+.aviso-subsistencia:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--tinta);
+}
+
+.aviso-subsistencia-texto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.aviso-subsistencia-texto strong {
+  font-size: 1.25rem;
+}
+
+.aviso-subsistencia .barra-tope {
+  height: 14px;
+}
+
+.aviso-subsistencia-mas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tinta-suave);
+}
+
+/* Casilla (checkbox) grande */
+.casilla {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: start;
+  gap: 12px;
+  margin-top: 20px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.casilla input {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  accent-color: var(--verde);
+}
+
+.casilla .campo-ayuda {
+  display: block;
+  margin-top: 2px;
+}
+
+/* ---------- Códigos QR ---------- */
+
+.qr-caja {
+  width: min(100%, 260px);
+  margin: 16px auto 8px;
+  padding: 8px;
+  border: var(--borde);
+  border-radius: var(--radio);
+  background: #fff;
+}
+
+.qr {
+  width: 100%;
+  height: auto;
+}
+
+.enlace-app {
+  text-align: center;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.cartel-qr {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  margin: 16px auto 0;
+  border-radius: var(--radio);
+  box-shadow: 0 4px 16px rgba(35, 28, 20, 0.18);
+}
+
 /* ---------- Avisos abajo (toast) ---------- */
 
 .avisos {

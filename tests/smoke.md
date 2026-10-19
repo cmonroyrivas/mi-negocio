@@ -135,6 +135,35 @@ qué se hizo y qué pasó.
 - [ ] En Ajustes → **Mi facilitadora** se puede cambiar el nombre y número, o **Quitar facilitadora** (con Deshacer).
 - [ ] El respaldo guarda y recupera la facilitadora y las fotos de los productos.
 
+## 3d. Registro de Subsistencia (fase 4)
+
+- [ ] Ajustes → marcar **Estoy en Registro de Subsistencia** → Guardar → "Guardado ✔ Mira tu tope en el inicio".
+- [ ] El inicio muestra, bajo el saldo, "Subsistencia · este mes · N% del tope" con barra y "Vas bien / Ojo, te acercas / Muy cerca del tope".
+      Desmarcar la casilla lo oculta.
+- [ ] Al tocarlo abre **Subsistencia**: "Tope de referencia: 5 UTM al mes", el monto y "Con la UTM de [mes anterior] de [año]".
+- [ ] **Este mes**: "Del 1 al [hoy] de [mes] vendiste $X", barra y "% del tope" con mensaje.
+- [ ] **Promedio de los últimos 6 meses**: promedio de los meses completos anotados (sin contar el mes en curso);
+      dice qué meses contó. Si hay menos de 6, dice "Son los meses que llevas anotando en la app".
+      Sin un mes completo anotado: "Todavía no tienes un mes completo anotado…".
+- [ ] Colores: verde bajo 70%, amarillo de 70% a 90%, rojo sobre 90%. Siempre con texto e ícono, no solo color.
+- [ ] Caso de prueba: ventas agosto $300.000 y septiembre $250.000, octubre $133.900 (hoy 19/10)
+      → tope $358.605, mes 37% verde, promedio $275.000 = 77% amarillo, "Contamos 2 meses: de agosto a septiembre".
+- [ ] Explicación "¿Cómo se calcula?" y el texto: "Esto es una guía. Para estar segura, consulta con el SII o con tu facilitadora."
+
+## 3e. Códigos QR (fase 4)
+
+- [ ] Mi catálogo → **Mi código QR para clientes**: cartel con el nombre del negocio, el QR, "Escanea y pídeme por WhatsApp" y el número.
+- [ ] Escanear el QR con otro celular abre WhatsApp al número del negocio con "Hola, quiero hacer un pedido".
+- [ ] **Compartir imagen** (Android) abre el menú Compartir con la imagen; **Guardar en este celular** la descarga.
+- [ ] Sin WhatsApp en Ajustes: "Para crear tu código, primero anota el WhatsApp de tu negocio en Ajustes".
+- [ ] Ajustes → **Compartir la app**: QR que abre https://cmonroyrivas.github.io/mi-negocio/ y botón **Compartir el enlace**.
+
+## 3f. Cartilla (fase 4)
+
+- [ ] `cartilla.pdf` (y la página `…/mi-negocio/cartilla.html`) cabe en **una hoja carta**.
+- [ ] Su QR abre la app. La dirección se lee en dos líneas sin cortar "mi-negocio".
+- [ ] Con la app instalada, abrir `…/cartilla.html` muestra la cartilla (no la app).
+
 ## 4. Ajustes
 
 - [ ] Se ven y se pueden cambiar: nombre del negocio, tu nombre, WhatsApp y a qué te dedicas. **Guardar cambios** → "Guardado ✔".

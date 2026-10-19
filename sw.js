@@ -3,7 +3,7 @@
 // IMPORTANTE: cada vez que cambies cualquier archivo de la app, sube CACHE_VERSION
 // (y APP_VERSION en js/config.js). Así los celulares bajan la versión nueva y
 // muestran el aviso "Hay una versión nueva, toca para actualizar".
-const CACHE_VERSION = 'mi-negocio-v1.2.0';
+const CACHE_VERSION = 'mi-negocio-v1.3.0';
 
 const ARCHIVOS = [
   './',
@@ -17,11 +17,13 @@ const ARCHIVOS = [
   './js/ui.js',
   './js/backup.js',
   './js/whatsapp.js',
+  './js/qr.js',
   './js/screens/inicio.js',
   './js/screens/caja.js',
   './js/screens/precio.js',
   './js/screens/catalogo.js',
   './js/screens/semana.js',
+  './js/screens/subsistencia.js',
   './js/screens/ajustes.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -65,8 +67,12 @@ self.addEventListener('fetch', (evento) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return; // WhatsApp y otros sitios van directo
 
-  const guardado = () =>
-    request.mode === 'navigate' ? caches.match('./index.html') : caches.match(request, { ignoreSearch: true });
+  // Al abrir la app (su dirección principal) se entrega index.html. Otras páginas, como
+  // cartilla.html, se piden normalmente.
+  const raiz = new URL('./', self.location).pathname; // por ejemplo '/mi-negocio/'
+  const esLaApp =
+    request.mode === 'navigate' && (url.pathname === raiz || url.pathname === raiz + 'index.html' || url.pathname + '/' === raiz);
+  const guardado = () => (esLaApp ? caches.match('./index.html') : caches.match(request, { ignoreSearch: true }));
 
   if (EN_DESARROLLO) {
     evento.respondWith(fetch(request).catch(() => guardado().then((r) => r || Response.error())));

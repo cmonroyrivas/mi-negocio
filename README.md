@@ -7,6 +7,8 @@ FOSIS Reparación y Emprendimiento 2026 a llevar su negocio día a día:
 - **¿Cuánto cobro?**: calcular el precio de un producto o servicio.
 - **Mi catálogo**: sus productos con precio y foto, compartir el catálogo y armar pedidos por WhatsApp.
 - **Mi semana**: gráfico de los últimos 7 días y resumen para mandar por WhatsApp.
+- **Subsistencia** (si lo marcan en Ajustes): cuánto llevan vendido frente al tope de 5 UTM.
+- **Códigos QR**: uno para que los clientes escriban al WhatsApp del negocio y otro para instalar la app.
 - **Ajustes**: datos del negocio y respaldo.
 
 No pide registro, correo ni contraseña. Funciona sin internet una vez instalada.
@@ -86,6 +88,26 @@ https://cmonroyrivas.github.io/mi-negocio/#/facilitadora?nombre=TU-NOMBRE&wsp=56
 - También pueden anotarte a mano en **Ajustes → Mi facilitadora**.
 - Mandar el resumen es siempre voluntario: la app nunca envía nada sola.
 
+## 4c. Cartilla para imprimir
+
+- El archivo **`cartilla.pdf`** (en esta carpeta) es una hoja tamaño carta para entregar a las usuarias:
+  QR para instalar la app, cómo instalarla, qué hace cada parte y cómo cuidar sus datos.
+- También está en línea: https://cmonroyrivas.github.io/mi-negocio/cartilla.html
+  (botón **Imprimir o guardar como PDF**).
+
+## 4d. Registro de Subsistencia: agregar la UTM de cada mes
+
+Quien marque en Ajustes **"Estoy en Registro de Subsistencia"** ve cuánto lleva vendido este mes
+y el promedio de los últimos 6 meses frente al tope de **5 UTM**, con la UTM del mes anterior.
+
+Cada mes el SII publica la UTM nueva (sii.cl → Valores y fechas → UTM). Para que la app la use:
+
+1. En `js/config.js`, en `UTM_POR_MES`, agrega una línea con el mes y su valor, por ejemplo `'2026-11': 72500,`
+2. Publica una versión nueva (punto 5).
+
+Si no se agrega, la app sigue usando la última UTM anotada y lo dice en pantalla. También puedes
+pedirle a Claude Code: "agrega la UTM de noviembre y súbelo".
+
 ## 5. Publicar una versión nueva
 
 Cada vez que se cambie algo de la app:
@@ -137,7 +159,9 @@ mi-negocio/
 │   ├── format.js          pesos, fechas, redondeo, WhatsApp
 │   ├── backup.js          guardar y recuperar respaldo
 │   ├── whatsapp.js        abrir WhatsApp o el menú Compartir con un mensaje
-│   └── screens/           inicio, caja, precio, catálogo, semana, ajustes
+│   ├── qr.js              generador de códigos QR propio (sin librerías)
+│   └── screens/           inicio, caja, precio, catálogo, semana, subsistencia, ajustes
+├── cartilla.html / .pdf   cartilla de una página para imprimir
 ├── icons/                 íconos de la app (icono.svg es el dibujo original)
 └── tests/smoke.md         lista de pruebas manuales
 ```
